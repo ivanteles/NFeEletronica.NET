@@ -1,43 +1,66 @@
-﻿namespace NFeEletronica.NotaFiscal
+﻿#region
+
+using System.Xml.Serialization;
+
+#endregion
+
+namespace NFeEletronica.NotaFiscal
 {
-    public enum ICMS
+    [XmlRoot("CIMS", Namespace = "http://www.portalfiscal.inf.br/nfe", IsNullable = false)]
+    public class Icms
     {
-        ICMS00,
-        ICMS10,
-        ICMS20,
-        ICMS30,
-        ICMS40_50,
-        ICMS51,
-        ICMS60,
-        ICMS70,
-        ICMS90,
-        ICMS101,
-        ICMS102_400,
-        ICMS201,
-        ICMS202,
-        ICMS500,
-        ICMS900
-    }
+        [XmlElement("orig")]
+        public string orig { get; set; }
 
-    public enum IPI
-    {
-        IPI00_49_50_99,
-        IPI01_55
-    }
+        [XmlElement("CST")]
+        public string CST { get; set; }
 
-    public enum PIS
-    {
-        PIS01_02,
-        PIS03,
-        PIS04_09,
-        PIS99
-    }
+        [XmlElement("modBC")]
+        public string modBC { get; set; }
 
-    public enum COFINS
-    {
-        CST01_02,
-        CST03,
-        CST04_09,
-        CST99
+        [XmlElement("vBC")]
+        public string vBC { get; set; }
+
+        [XmlElement("pICMS")]
+        public string pICMS { get; set; }
+
+        [XmlElement("vICMS")]
+        public string vICMS { get; set; }
+
+        [XmlElement("modBCST")]
+        public string modBCST { get; set; }
+
+        [XmlElement("pMVAST")]
+        public string pMVAST { get; set; }
+
+        [XmlElement("pRedBCST")]
+        public string pRedBCST { get; set; }
+
+        [XmlElement("vBCST")]
+        public string vBCST { get; set; }
+
+        [XmlElement("pICMSST")]
+        public string pICMSST { get; set; }
+
+        [XmlElement("vICMSST")]
+        public string vICMSST { get; set; }
+
+        [XmlElement("pRedBC")]
+        public string pRedBC { get; set; }
+
+        [XmlElement("CSOSN")]
+        public string CSOSN { get; set; }
+
+        [XmlElement("pCredSN")]
+        public string pCredSN { get; set; }
+
+        [XmlElement("vCredICMSSN")]
+        public string vCredICMSSN { get; set; }
+
+        [XmlElement("vBCSTRet")]
+        public string vBCSTRet { get; set; }
+
+        [XmlElement("vICMSSTRet")]
+        public string vICMSSTRet { get; set; }
     }
 }

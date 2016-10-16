@@ -11,7 +11,7 @@ namespace NFeEletronica.NotaFiscal
 {
     public class Nota
     {
-        private readonly List<DET> detList;
+        private readonly List<Det> detList;
         private readonly INFeContexto nFeContexto;
         private readonly StringBuilder xmlString;
         public String ArquivoNome = "";
@@ -23,13 +23,13 @@ namespace NFeEletronica.NotaFiscal
         {
             this.nFeContexto = nFeContexto;
 
-            ide = new IDE();
-            emit = new EMIT();
-            dest = new DEST();
-            detList = new List<DET>();
-            total = new TOTAL();
-            transp = new TRANSP();
-            cobr = new COBR();
+            ide = new Ide();
+            emit = new Emit();
+            dest = new Dest();
+            detList = new List<Det>();
+            total = new Total();
+            transp = new Transp();
+            cobr = new Cobr();
 
             xmlString = new StringBuilder();
 
@@ -53,15 +53,15 @@ namespace NFeEletronica.NotaFiscal
             ConteudoXml = xmlDoc.ToString();
         }
 
-        public IDE ide { get; set; }
-        public EMIT emit { get; set; }
-        public DEST dest { get; set; }
-        public TOTAL total { get; set; }
-        public TRANSP transp { get; set; }
-        public COBR cobr { get; set; }
+        public Ide ide { get; set; }
+        public Emit emit { get; set; }
+        public Dest dest { get; set; }
+        public Total total { get; set; }
+        public Transp transp { get; set; }
+        public Cobr cobr { get; set; }
         public String infAdic { get; set; }
 
-        public void AddDet(DET det)
+        public void AddDet(Det det)
         {
             detList.Add(det);
         }
@@ -207,18 +207,18 @@ namespace NFeEletronica.NotaFiscal
 
             xmlString.Append("	<xNome>" + emit.xNome + "</xNome>");
             xmlString.Append("	<enderEmit>");
-            xmlString.Append("		<xLgr>" + emit.xLgr + "</xLgr>");
-            xmlString.Append("		<nro>" + emit.nro + "</nro>");
-            xmlString.Append("		<xBairro>" + emit.xBairro + "</xBairro>");
-            xmlString.Append("		<cMun>" + emit.cMun + "</cMun>");
-            xmlString.Append("		<xMun>" + emit.xMun + "</xMun>");
-            xmlString.Append("		<UF>" + emit.UF.Trim() + "</UF>");
-            xmlString.Append("		<CEP>" + emit.CEP + "</CEP>");
+            xmlString.Append("		<xLgr>" + emit.EnderEmit.xLgr + "</xLgr>");
+            xmlString.Append("		<nro>" + emit.EnderEmit.nro + "</nro>");
+            xmlString.Append("		<xBairro>" + emit.EnderEmit.xBairro + "</xBairro>");
+            xmlString.Append("		<cMun>" + emit.EnderEmit.cMun + "</cMun>");
+            xmlString.Append("		<xMun>" + emit.EnderEmit.xMun + "</xMun>");
+            xmlString.Append("		<UF>" + emit.EnderEmit.UF.Trim() + "</UF>");
+            xmlString.Append("		<CEP>" + emit.EnderEmit.CEP + "</CEP>");
             xmlString.Append("		<cPais>1058</cPais>");
             xmlString.Append("		<xPais>BRASIL</xPais>");
 
-            if (!String.IsNullOrEmpty(emit.fone))
-                xmlString.Append("		<fone>" + emit.fone + "</fone>");
+            if (!String.IsNullOrEmpty(emit.EnderEmit.fone))
+                xmlString.Append("		<fone>" + emit.EnderEmit.fone + "</fone>");
 
             xmlString.Append("	</enderEmit>");
 
@@ -248,21 +248,21 @@ namespace NFeEletronica.NotaFiscal
 
             xmlString.Append("	<xNome>" + dest.xNome + "</xNome>");
             xmlString.Append("	<enderDest>");
-            xmlString.Append("		<xLgr>" + dest.xLgr + "</xLgr>");
-            xmlString.Append("		<nro>" + dest.nro + "</nro>");
+            xmlString.Append("		<xLgr>" + dest.EnderDest.xLgr + "</xLgr>");
+            xmlString.Append("		<nro>" + dest.EnderDest.nro + "</nro>");
 
-            if (!String.IsNullOrEmpty(dest.xCpl))
+            if (!String.IsNullOrEmpty(dest.EnderDest.xCpl))
             {
-                xmlString.Append("		<xCpl>" + dest.xCpl + "</xCpl>");
+                xmlString.Append("		<xCpl>" + dest.EnderDest.xCpl + "</xCpl>");
             }
 
-            xmlString.Append("		<xBairro>" + dest.xBairro + "</xBairro>");
-            xmlString.Append("		<cMun>" + dest.cMun + "</cMun>");
-            xmlString.Append("		<xMun>" + dest.xMun + "</xMun>");
-            xmlString.Append("		<UF>" + dest.UF.Trim() + "</UF>");
+            xmlString.Append("		<xBairro>" + dest.EnderDest.xBairro + "</xBairro>");
+            xmlString.Append("		<cMun>" + dest.EnderDest.cMun + "</cMun>");
+            xmlString.Append("		<xMun>" + dest.EnderDest.xMun + "</xMun>");
+            xmlString.Append("		<UF>" + dest.EnderDest.UF.Trim() + "</UF>");
 
-            if (!String.IsNullOrEmpty(dest.CEP))
-                xmlString.Append("		<CEP>" + dest.CEP + "</CEP>");
+            if (!String.IsNullOrEmpty(dest.EnderDest.CEP))
+                xmlString.Append("		<CEP>" + dest.EnderDest.CEP + "</CEP>");
 
             xmlString.Append("		<cPais>1058</cPais>");
             xmlString.Append("		<xPais>BRASIL</xPais>");
@@ -293,36 +293,36 @@ namespace NFeEletronica.NotaFiscal
             {
                 xmlString.Append("<det nItem=\"" + (i + 1) + "\">");
                 xmlString.Append("	<prod>");
-                xmlString.Append("		<cProd>" + detList[i].cProd.Trim() + "</cProd>");
-                xmlString.Append("		<cEAN>" + detList[i].cEAN + "</cEAN>");
-                xmlString.Append("		<xProd>" + detList[i].xProd + "</xProd>");
-                xmlString.Append("		<NCM>" + detList[i].NCM + "</NCM>");
-                xmlString.Append("		<CFOP>" + detList[i].CFOP + "</CFOP>");
-                xmlString.Append("		<uCom>" + detList[i].uCom + "</uCom>");
-                xmlString.Append("		<qCom>" + detList[i].qCom + "</qCom>");
-                xmlString.Append("		<vUnCom>" + detList[i].vUnCom + "</vUnCom>");
-                xmlString.Append("		<vProd>" + detList[i].vProd + "</vProd>");
-                xmlString.Append("		<cEANTrib>" + detList[i].cEANTrib + "</cEANTrib>");
-                xmlString.Append("		<uTrib>" + detList[i].uTrib + "</uTrib>");
-                xmlString.Append("		<qTrib>" + detList[i].qTrib + "</qTrib>");
-                xmlString.Append("		<vUnTrib>" + detList[i].vUnTrib + "</vUnTrib>");
+                xmlString.Append("		<cProd>" + detList[i].Prod.cProd.Trim() + "</cProd>");
+                xmlString.Append("		<cEAN>" + detList[i].Prod.cEAN + "</cEAN>");
+                xmlString.Append("		<xProd>" + detList[i].Prod.xProd + "</xProd>");
+                xmlString.Append("		<NCM>" + detList[i].Prod.NCM + "</NCM>");
+                xmlString.Append("		<CFOP>" + detList[i].Prod.CFOP + "</CFOP>");
+                xmlString.Append("		<uCom>" + detList[i].Prod.uCom + "</uCom>");
+                xmlString.Append("		<qCom>" + detList[i].Prod.qCom + "</qCom>");
+                xmlString.Append("		<vUnCom>" + detList[i].Prod.vUnCom + "</vUnCom>");
+                xmlString.Append("		<vProd>" + detList[i].Prod.vProd + "</vProd>");
+                xmlString.Append("		<cEANTrib>" + detList[i].Prod.cEANTrib + "</cEANTrib>");
+                xmlString.Append("		<uTrib>" + detList[i].Prod.uTrib + "</uTrib>");
+                xmlString.Append("		<qTrib>" + detList[i].Prod.qTrib + "</qTrib>");
+                xmlString.Append("		<vUnTrib>" + detList[i].Prod.vUnTrib + "</vUnTrib>");
 
-                if (!String.IsNullOrEmpty(detList[i].vFrete))
+                if (!String.IsNullOrEmpty(detList[i].Prod.vFrete))
                 {
-                    xmlString.Append("		<vFrete>" + detList[i].vFrete + "</vFrete>");
+                    xmlString.Append("		<vFrete>" + detList[i].Prod.vFrete + "</vFrete>");
                 }
-                if (!String.IsNullOrEmpty(detList[i].vDesc))
+                if (!String.IsNullOrEmpty(detList[i].Prod.vDesc))
                 {
-                    xmlString.Append("		<vDesc>" + detList[i].vDesc + "</vDesc>");
+                    xmlString.Append("		<vDesc>" + detList[i].Prod.vDesc + "</vDesc>");
                 }
 
-                xmlString.Append("		<indTot>" + detList[i].indTot + "</indTot>");
+                xmlString.Append("		<indTot>" + detList[i].Prod.indTot + "</indTot>");
                 xmlString.Append("	</prod>");
 
                 xmlString.Append("	<imposto>");
 
-                if (!string.IsNullOrEmpty(detList[i].vTotTrib))
-                    xmlString.Append("	<vTotTrib>" + detList[i].vTotTrib + "</vTotTrib>");
+                if (!string.IsNullOrEmpty(detList[i].Prod.vTotTrib))
+                    xmlString.Append("	<vTotTrib>" + detList[i].Prod.vTotTrib + "</vTotTrib>");
 
                 MontaDET_ICMS(detList[i]);
                 MontaDET_IPI(detList[i]);
@@ -335,268 +335,268 @@ namespace NFeEletronica.NotaFiscal
             }
         }
 
-        private void MontaDET_ICMS(DET det)
+        private void MontaDET_ICMS(Det det)
         {
             xmlString.Append("<ICMS>");
 
             switch (det.icms)
             {
-                case ICMS.ICMS00:
+                case GetIcms.ICMS00:
                     xmlString.Append("<ICMS00>");
-                    xmlString.Append("    <orig>" + det.icms_orig + "</orig>");
-                    xmlString.Append("    <CST>" + det.icms_CST + "</CST>");
-                    xmlString.Append("    <modBC>" + det.icms_modBC + "</modBC>");
-                    xmlString.Append("    <vBC>" + det.icms_vBC + "</vBC>");
-                    xmlString.Append("    <pICMS>" + det.icms_pICMS + "</pICMS>");
-                    xmlString.Append("    <vICMS>" + det.icms_vICMS + "</vICMS>");
+                    xmlString.Append("    <orig>" + det.Imposto.Icms.orig + "</orig>");
+                    xmlString.Append("    <CST>" + det.Imposto.Icms.CST + "</CST>");
+                    xmlString.Append("    <modBC>" + det.Imposto.Icms.modBC + "</modBC>");
+                    xmlString.Append("    <vBC>" + det.Imposto.Icms.vBC + "</vBC>");
+                    xmlString.Append("    <pICMS>" + det.Imposto.Icms.pICMS + "</pICMS>");
+                    xmlString.Append("    <vICMS>" + det.Imposto.Icms.vICMS + "</vICMS>");
                     xmlString.Append("</ICMS00>");
                     break;
-                case ICMS.ICMS10:
+                case GetIcms.ICMS10:
                     xmlString.Append("<ICMS10>");
-                    xmlString.Append("    <orig>" + det.icms_orig + "</orig>");
-                    xmlString.Append("    <CST>" + det.icms_CST + "</CST>");
-                    xmlString.Append("    <modBC>" + det.icms_modBC + "</modBC>");
-                    xmlString.Append("    <vBC>" + det.icms_vBC + "</vBC>");
-                    xmlString.Append("    <pICMS>" + det.icms_pICMS + "</pICMS>");
-                    xmlString.Append("    <vICMS>" + det.icms_vICMS + "</vICMS>");
-                    xmlString.Append("    <modBCST>" + det.icms_modBCST + "</modBCST>");
+                    xmlString.Append("    <orig>" + det.Imposto.Icms.orig + "</orig>");
+                    xmlString.Append("    <CST>" + det.Imposto.Icms.CST + "</CST>");
+                    xmlString.Append("    <modBC>" + det.Imposto.Icms.modBC + "</modBC>");
+                    xmlString.Append("    <vBC>" + det.Imposto.Icms.vBC + "</vBC>");
+                    xmlString.Append("    <pICMS>" + det.Imposto.Icms.pICMS + "</pICMS>");
+                    xmlString.Append("    <vICMS>" + det.Imposto.Icms.vICMS + "</vICMS>");
+                    xmlString.Append("    <modBCST>" + det.Imposto.Icms.modBCST + "</modBCST>");
 
-                    if (!String.IsNullOrEmpty(det.icms_pMVAST))
+                    if (!String.IsNullOrEmpty(det.Imposto.Icms.pMVAST))
                     {
-                        xmlString.Append("    <pMVAST>" + det.icms_pMVAST + "</pMVAST>");
+                        xmlString.Append("    <pMVAST>" + det.Imposto.Icms.pMVAST + "</pMVAST>");
                     }
 
-                    if (!String.IsNullOrEmpty(det.icms_pRedBCST))
+                    if (!String.IsNullOrEmpty(det.Imposto.Icms.pRedBCST))
                     {
-                        xmlString.Append("    <pRedBCST>" + det.icms_pRedBCST + "</pRedBCST>");
+                        xmlString.Append("    <pRedBCST>" + det.Imposto.Icms.pRedBCST + "</pRedBCST>");
                     }
 
-                    xmlString.Append("    <vBCST>" + det.icms_vBCST + "</vBCST>");
-                    xmlString.Append("    <pICMSST>" + det.icms_pICMSST + "</pICMSST>");
-                    xmlString.Append("    <vICMSST>" + det.icms_vICMSST + "</vICMSST>");
+                    xmlString.Append("    <vBCST>" + det.Imposto.Icms.vBCST + "</vBCST>");
+                    xmlString.Append("    <pICMSST>" + det.Imposto.Icms.pICMSST + "</pICMSST>");
+                    xmlString.Append("    <vICMSST>" + det.Imposto.Icms.vICMSST + "</vICMSST>");
 
                     xmlString.Append("</ICMS10>");
                     break;
-                case ICMS.ICMS20:
+                case GetIcms.ICMS20:
                     xmlString.Append("<ICMS20>");
-                    xmlString.Append("    <orig>" + det.icms_orig + "</orig>");
-                    xmlString.Append("    <CST>" + det.icms_CST + "</CST>");
-                    xmlString.Append("    <modBC>" + det.icms_modBC + "</modBC>");
-                    xmlString.Append("    <pRedBC>" + det.icms_pRedBC + "</pRedBC>");
-                    xmlString.Append("    <vBC>" + det.icms_vBC + "</vBC>");
-                    xmlString.Append("    <pICMS>" + det.icms_pICMS + "</pICMS>");
-                    xmlString.Append("    <vICMS>" + det.icms_vICMS + "</vICMS>");
+                    xmlString.Append("    <orig>" + det.Imposto.Icms.orig + "</orig>");
+                    xmlString.Append("    <CST>" + det.Imposto.Icms.CST + "</CST>");
+                    xmlString.Append("    <modBC>" + det.Imposto.Icms.modBC + "</modBC>");
+                    xmlString.Append("    <pRedBC>" + det.Imposto.Icms.pRedBC + "</pRedBC>");
+                    xmlString.Append("    <vBC>" + det.Imposto.Icms.vBC + "</vBC>");
+                    xmlString.Append("    <pICMS>" + det.Imposto.Icms.pICMS + "</pICMS>");
+                    xmlString.Append("    <vICMS>" + det.Imposto.Icms.vICMS + "</vICMS>");
                     xmlString.Append("</ICMS20>");
                     break;
-                case ICMS.ICMS30:
+                case GetIcms.ICMS30:
                     xmlString.Append("<ICMS30>");
-                    xmlString.Append("    <orig>" + det.icms_orig + "</orig>");
-                    xmlString.Append("    <CST>" + det.icms_CST + "</CST>");
-                    xmlString.Append("    <modBCST>" + det.icms_modBCST + "</modBCST>");
-                    xmlString.Append("    <pMVAST>" + det.icms_pMVAST + "</pMVAST>");
-                    xmlString.Append("    <pRedBCST>" + det.icms_pRedBCST + "</pRedBCST>");
-                    xmlString.Append("    <vBCST>" + det.icms_vBCST + "</vBCST>");
-                    xmlString.Append("    <pICMSST>" + det.icms_pICMSST + "</pICMSST>");
-                    xmlString.Append("    <vICMSST>" + det.icms_vICMSST + "</vICMSST>");
+                    xmlString.Append("    <orig>" + det.Imposto.Icms.orig + "</orig>");
+                    xmlString.Append("    <CST>" + det.Imposto.Icms.CST + "</CST>");
+                    xmlString.Append("    <modBCST>" + det.Imposto.Icms.modBCST + "</modBCST>");
+                    xmlString.Append("    <pMVAST>" + det.Imposto.Icms.pMVAST + "</pMVAST>");
+                    xmlString.Append("    <pRedBCST>" + det.Imposto.Icms.pRedBCST + "</pRedBCST>");
+                    xmlString.Append("    <vBCST>" + det.Imposto.Icms.vBCST + "</vBCST>");
+                    xmlString.Append("    <pICMSST>" + det.Imposto.Icms.pICMSST + "</pICMSST>");
+                    xmlString.Append("    <vICMSST>" + det.Imposto.Icms.vICMSST + "</vICMSST>");
                     xmlString.Append("</ICMS30>");
                     break;
-                case ICMS.ICMS40_50:
+                case GetIcms.ICMS40_50:
                     xmlString.Append("<ICMS40>");
-                    xmlString.Append("    <orig>" + det.icms_orig + "</orig>");
-                    xmlString.Append("    <CST>" + det.icms_CST + "</CST>");
+                    xmlString.Append("    <orig>" + det.Imposto.Icms.orig + "</orig>");
+                    xmlString.Append("    <CST>" + det.Imposto.Icms.CST + "</CST>");
                     xmlString.Append("</ICMS40>");
                     break;
-                case ICMS.ICMS51:
+                case GetIcms.ICMS51:
                     xmlString.Append("<ICMS51>");
-                    xmlString.Append("    <orig>" + det.icms_orig + "</orig>");
-                    xmlString.Append("    <CST>" + det.icms_CST + "</CST>");
+                    xmlString.Append("    <orig>" + det.Imposto.Icms.orig + "</orig>");
+                    xmlString.Append("    <CST>" + det.Imposto.Icms.CST + "</CST>");
                     xmlString.Append("</ICMS51>");
 
-                    if (!String.IsNullOrEmpty(det.icms_pRedBCST))
+                    if (!String.IsNullOrEmpty(det.Imposto.Icms.pRedBCST))
                     {
-                        xmlString.Append("    <modBC>" + det.icms_modBC + "</modBC>");
+                        xmlString.Append("    <modBC>" + det.Imposto.Icms.modBC + "</modBC>");
                     }
 
-                    if (!String.IsNullOrEmpty(det.icms_pRedBCST))
+                    if (!String.IsNullOrEmpty(det.Imposto.Icms.pRedBCST))
                     {
-                        xmlString.Append("    <pRedBC>" + det.icms_pRedBC + "</pRedBC>");
+                        xmlString.Append("    <pRedBC>" + det.Imposto.Icms.pRedBC + "</pRedBC>");
                     }
 
-                    if (!String.IsNullOrEmpty(det.icms_pRedBCST))
+                    if (!String.IsNullOrEmpty(det.Imposto.Icms.pRedBCST))
                     {
-                        xmlString.Append("    <vBC>" + det.icms_vBC + "</vBC>");
+                        xmlString.Append("    <vBC>" + det.Imposto.Icms.vBC + "</vBC>");
                     }
 
-                    if (!String.IsNullOrEmpty(det.icms_pRedBCST))
+                    if (!String.IsNullOrEmpty(det.Imposto.Icms.pRedBCST))
                     {
-                        xmlString.Append("    <pICMS>" + det.icms_pICMS + "</pICMS>");
+                        xmlString.Append("    <pICMS>" + det.Imposto.Icms.pICMS + "</pICMS>");
                     }
 
-                    if (!String.IsNullOrEmpty(det.icms_pRedBCST))
+                    if (!String.IsNullOrEmpty(det.Imposto.Icms.pRedBCST))
                     {
-                        xmlString.Append("    <vICMS>" + det.icms_vICMS + "</vICMS>");
+                        xmlString.Append("    <vICMS>" + det.Imposto.Icms.vICMS + "</vICMS>");
                     }
                     break;
-                case ICMS.ICMS60:
+                case GetIcms.ICMS60:
                     xmlString.Append("<ICMS60>");
-                    xmlString.Append("    <orig>" + det.icms_orig + "</orig>");
-                    xmlString.Append("    <CST>" + det.icms_CST + "</CST>");
+                    xmlString.Append("    <orig>" + det.Imposto.Icms.orig + "</orig>");
+                    xmlString.Append("    <CST>" + det.Imposto.Icms.CST + "</CST>");
                     xmlString.Append("</ICMS60>");
                     break;
-                case ICMS.ICMS70:
+                case GetIcms.ICMS70:
                     xmlString.Append("<ICMS70>");
-                    xmlString.Append("    <orig>" + det.icms_orig + "</orig>");
-                    xmlString.Append("    <CST>" + det.icms_CST + "</CST>");
-                    xmlString.Append("    <modBC>" + det.icms_modBC + "</modBC>");
-                    xmlString.Append("    <pRedBC>" + det.icms_pRedBC + "</pRedBC>");
-                    xmlString.Append("    <vBC>" + det.icms_vBC + "</vBC>");
-                    xmlString.Append("    <pICMS>" + det.icms_pICMS + "</pICMS>");
-                    xmlString.Append("    <vICMS>" + det.icms_vICMS + "</vICMS>");
-                    xmlString.Append("    <modBCST>" + det.icms_modBCST + "</modBCST>");
+                    xmlString.Append("    <orig>" + det.Imposto.Icms.orig + "</orig>");
+                    xmlString.Append("    <CST>" + det.Imposto.Icms.CST + "</CST>");
+                    xmlString.Append("    <modBC>" + det.Imposto.Icms.modBC + "</modBC>");
+                    xmlString.Append("    <pRedBC>" + det.Imposto.Icms.pRedBC + "</pRedBC>");
+                    xmlString.Append("    <vBC>" + det.Imposto.Icms.vBC + "</vBC>");
+                    xmlString.Append("    <pICMS>" + det.Imposto.Icms.pICMS + "</pICMS>");
+                    xmlString.Append("    <vICMS>" + det.Imposto.Icms.vICMS + "</vICMS>");
+                    xmlString.Append("    <modBCST>" + det.Imposto.Icms.modBCST + "</modBCST>");
 
-                    if (!String.IsNullOrEmpty(det.icms_pMVAST))
+                    if (!String.IsNullOrEmpty(det.Imposto.Icms.pMVAST))
                     {
-                        xmlString.Append("    <pMVAST>" + det.icms_pMVAST + "</pMVAST>");
+                        xmlString.Append("    <pMVAST>" + det.Imposto.Icms.pMVAST + "</pMVAST>");
                     }
 
-                    if (!String.IsNullOrEmpty(det.icms_pRedBCST))
+                    if (!String.IsNullOrEmpty(det.Imposto.Icms.pRedBCST))
                     {
-                        xmlString.Append("    <pRedBCST>" + det.icms_pRedBCST + "</pRedBCST>");
+                        xmlString.Append("    <pRedBCST>" + det.Imposto.Icms.pRedBCST + "</pRedBCST>");
                     }
 
-                    xmlString.Append("    <vBCST>" + det.icms_vBCST + "</vBCST>");
-                    xmlString.Append("    <pICMSST>" + det.icms_pICMSST + "</pICMSST>");
-                    xmlString.Append("    <vICMSST>" + det.icms_vICMSST + "</vICMSST>");
+                    xmlString.Append("    <vBCST>" + det.Imposto.Icms.vBCST + "</vBCST>");
+                    xmlString.Append("    <pICMSST>" + det.Imposto.Icms.pICMSST + "</pICMSST>");
+                    xmlString.Append("    <vICMSST>" + det.Imposto.Icms.vICMSST + "</vICMSST>");
                     xmlString.Append("</ICMS70>");
                     break;
-                case ICMS.ICMS90:
+                case GetIcms.ICMS90:
                     xmlString.Append("<ICMS90>");
-                    xmlString.Append("    <orig>" + det.icms_orig + "</orig>");
-                    xmlString.Append("    <CST>" + det.icms_CST + "</CST>");
-                    xmlString.Append("    <modBC>" + det.icms_modBC + "</modBC>");
-                    xmlString.Append("    <vBC>" + det.icms_vBC + "</vBC>");
+                    xmlString.Append("    <orig>" + det.Imposto.Icms.orig + "</orig>");
+                    xmlString.Append("    <CST>" + det.Imposto.Icms.CST + "</CST>");
+                    xmlString.Append("    <modBC>" + det.Imposto.Icms.modBC + "</modBC>");
+                    xmlString.Append("    <vBC>" + det.Imposto.Icms.vBC + "</vBC>");
 
-                    if (!String.IsNullOrEmpty(det.icms_pRedBC))
+                    if (!String.IsNullOrEmpty(det.Imposto.Icms.pRedBC))
                     {
-                        xmlString.Append("    <pRedBC>" + det.icms_pRedBC + "</pRedBC>");
+                        xmlString.Append("    <pRedBC>" + det.Imposto.Icms.pRedBC + "</pRedBC>");
                     }
 
-                    xmlString.Append("    <pICMS>" + det.icms_pICMS + "</pICMS>");
-                    xmlString.Append("    <vICMS>" + det.icms_vICMS + "</vICMS>");
-                    xmlString.Append("    <modBCST>" + det.icms_modBCST + "</modBCST>");
+                    xmlString.Append("    <pICMS>" + det.Imposto.Icms.pICMS + "</pICMS>");
+                    xmlString.Append("    <vICMS>" + det.Imposto.Icms.vICMS + "</vICMS>");
+                    xmlString.Append("    <modBCST>" + det.Imposto.Icms.modBCST + "</modBCST>");
 
-                    if (!String.IsNullOrEmpty(det.icms_pMVAST))
+                    if (!String.IsNullOrEmpty(det.Imposto.Icms.pMVAST))
                     {
-                        xmlString.Append("    <pMVAST>" + det.icms_pMVAST + "</pMVAST>");
+                        xmlString.Append("    <pMVAST>" + det.Imposto.Icms.pMVAST + "</pMVAST>");
                     }
 
-                    if (!String.IsNullOrEmpty(det.icms_pRedBCST))
+                    if (!String.IsNullOrEmpty(det.Imposto.Icms.pRedBCST))
                     {
-                        xmlString.Append("    <pRedBCST>" + det.icms_pRedBCST + "</pRedBCST>");
+                        xmlString.Append("    <pRedBCST>" + det.Imposto.Icms.pRedBCST + "</pRedBCST>");
                     }
 
-                    xmlString.Append("    <vBCST>" + det.icms_vBCST + "</vBCST>");
-                    xmlString.Append("    <pICMSST>" + det.icms_pICMSST + "</pICMSST>");
-                    xmlString.Append("    <vICMSST>" + det.icms_vICMSST + "</vICMSST>");
+                    xmlString.Append("    <vBCST>" + det.Imposto.Icms.vBCST + "</vBCST>");
+                    xmlString.Append("    <pICMSST>" + det.Imposto.Icms.pICMSST + "</pICMSST>");
+                    xmlString.Append("    <vICMSST>" + det.Imposto.Icms.vICMSST + "</vICMSST>");
                     xmlString.Append("</ICMS90>");
                     break;
-                case ICMS.ICMS101:
+                case GetIcms.ICMS101:
                     xmlString.Append("<ICMSSN101>");
-                    xmlString.Append("    <orig>" + det.icms_orig + "</orig>");
-                    xmlString.Append("    <CSOSN>" + det.icms_CSOSN + "</CSOSN>");
-                    xmlString.Append("    <pCredSN>" + det.icms_pCredSN + "</pCredSN>");
-                    xmlString.Append("    <vCredICMSSN>" + det.icms_vCredICMSSN + "</vCredICMSSN>");
+                    xmlString.Append("    <orig>" + det.Imposto.Icms.orig + "</orig>");
+                    xmlString.Append("    <CSOSN>" + det.Imposto.Icms.CSOSN + "</CSOSN>");
+                    xmlString.Append("    <pCredSN>" + det.Imposto.Icms.pCredSN + "</pCredSN>");
+                    xmlString.Append("    <vCredICMSSN>" + det.Imposto.Icms.vCredICMSSN + "</vCredICMSSN>");
                     xmlString.Append("</ICMSSN101>");
                     break;
-                case ICMS.ICMS102_400:
+                case GetIcms.ICMS102_400:
                     xmlString.Append("<ICMSSN102>");
-                    xmlString.Append("    <orig>" + det.icms_orig + "</orig>");
-                    xmlString.Append("    <CSOSN>" + det.icms_CSOSN + "</CSOSN>");
+                    xmlString.Append("    <orig>" + det.Imposto.Icms.orig + "</orig>");
+                    xmlString.Append("    <CSOSN>" + det.Imposto.Icms.CSOSN + "</CSOSN>");
                     xmlString.Append("</ICMSSN102>");
                     break;
-                case ICMS.ICMS201:
+                case GetIcms.ICMS201:
                     xmlString.Append("<ICMSSN201>");
-                    xmlString.Append("    <orig>" + det.icms_orig + "</orig>");
-                    xmlString.Append("    <CSOSN>" + det.icms_CSOSN + "</CSOSN>");
-                    xmlString.Append("    <modBCST>" + det.icms_modBCST + "</modBCST>");
+                    xmlString.Append("    <orig>" + det.Imposto.Icms.orig + "</orig>");
+                    xmlString.Append("    <CSOSN>" + det.Imposto.Icms.CSOSN + "</CSOSN>");
+                    xmlString.Append("    <modBCST>" + det.Imposto.Icms.modBCST + "</modBCST>");
 
-                    if (!String.IsNullOrEmpty(det.icms_pRedBCST))
+                    if (!String.IsNullOrEmpty(det.Imposto.Icms.pRedBCST))
                     {
-                        xmlString.Append("    <pMVAST>" + det.icms_pMVAST + "</pMVAST>");
+                        xmlString.Append("    <pMVAST>" + det.Imposto.Icms.pMVAST + "</pMVAST>");
                     }
 
-                    if (!String.IsNullOrEmpty(det.icms_pRedBCST))
+                    if (!String.IsNullOrEmpty(det.Imposto.Icms.pRedBCST))
                     {
-                        xmlString.Append("    <pRedBCST>" + det.icms_pRedBCST + "</pRedBCST>");
+                        xmlString.Append("    <pRedBCST>" + det.Imposto.Icms.pRedBCST + "</pRedBCST>");
                     }
 
-                    xmlString.Append("    <vBCST>" + det.icms_vBCST + "</vBCST>");
-                    xmlString.Append("    <pICMSST>" + det.icms_pICMSST + "</pICMSST>");
-                    xmlString.Append("    <vICMSST>" + det.icms_vICMSST + "</vICMSST>");
+                    xmlString.Append("    <vBCST>" + det.Imposto.Icms.vBCST + "</vBCST>");
+                    xmlString.Append("    <pICMSST>" + det.Imposto.Icms.pICMSST + "</pICMSST>");
+                    xmlString.Append("    <vICMSST>" + det.Imposto.Icms.vICMSST + "</vICMSST>");
 
                     xmlString.Append("</ICMSSN201>");
                     break;
-                case ICMS.ICMS202:
+                case GetIcms.ICMS202:
                     xmlString.Append("<ICMSSN202>");
-                    xmlString.Append("    <orig>" + det.icms_orig + "</orig>");
-                    xmlString.Append("    <CSOSN>" + det.icms_CSOSN + "</CSOSN>");
-                    xmlString.Append("    <modBCST>" + det.icms_modBCST + "</modBCST>");
+                    xmlString.Append("    <orig>" + det.Imposto.Icms.orig + "</orig>");
+                    xmlString.Append("    <CSOSN>" + det.Imposto.Icms.CSOSN + "</CSOSN>");
+                    xmlString.Append("    <modBCST>" + det.Imposto.Icms.modBCST + "</modBCST>");
 
-                    if (!String.IsNullOrEmpty(det.icms_pMVAST))
+                    if (!String.IsNullOrEmpty(det.Imposto.Icms.pMVAST))
                     {
-                        xmlString.Append("    <pMVAST>" + det.icms_pMVAST + "</pMVAST>");
+                        xmlString.Append("    <pMVAST>" + det.Imposto.Icms.pMVAST + "</pMVAST>");
                     }
 
-                    if (!String.IsNullOrEmpty(det.icms_pRedBCST))
+                    if (!String.IsNullOrEmpty(det.Imposto.Icms.pRedBCST))
                     {
-                        xmlString.Append("    <pRedBCST>" + det.icms_pRedBCST + "</pRedBCST>");
+                        xmlString.Append("    <pRedBCST>" + det.Imposto.Icms.pRedBCST + "</pRedBCST>");
                     }
 
-                    xmlString.Append("    <vBCST>" + det.icms_vBCST + "</vBCST>");
-                    xmlString.Append("    <pICMSST>" + det.icms_pICMSST + "</pICMSST>");
-                    xmlString.Append("    <vICMSST>" + det.icms_vICMSST + "</vICMSST>");
+                    xmlString.Append("    <vBCST>" + det.Imposto.Icms.vBCST + "</vBCST>");
+                    xmlString.Append("    <pICMSST>" + det.Imposto.Icms.pICMSST + "</pICMSST>");
+                    xmlString.Append("    <vICMSST>" + det.Imposto.Icms.vICMSST + "</vICMSST>");
 
                     xmlString.Append("</ICMSSN202>");
                     break;
-                case ICMS.ICMS500:
+                case GetIcms.ICMS500:
                     xmlString.Append("<ICMSSN500>");
-                    xmlString.Append("    <orig>" + det.icms_orig + "</orig>");
-                    xmlString.Append("    <CSOSN>" + det.icms_CSOSN + "</CSOSN>");
-                    xmlString.Append("    <vBCSTRet>" + det.icms_vBCSTRet + "</vBCSTRet>");
-                    xmlString.Append("    <vICMSSTRet>" + det.icms_vICMSSTRet + "</vICMSSTRet>");
+                    xmlString.Append("    <orig>" + det.Imposto.Icms.orig + "</orig>");
+                    xmlString.Append("    <CSOSN>" + det.Imposto.Icms.CSOSN + "</CSOSN>");
+                    xmlString.Append("    <vBCSTRet>" + det.Imposto.Icms.vBCSTRet + "</vBCSTRet>");
+                    xmlString.Append("    <vICMSSTRet>" + det.Imposto.Icms.vICMSSTRet + "</vICMSSTRet>");
                     xmlString.Append("</ICMSSN500>");
                     break;
-                case ICMS.ICMS900:
+                case GetIcms.ICMS900:
                     xmlString.Append("<ICMSSN900>");
-                    xmlString.Append("    <orig>" + det.icms_orig + "</orig>");
-                    xmlString.Append("    <CSOSN>" + det.icms_CSOSN + "</CSOSN>");
-                    xmlString.Append("    <modBC>" + det.icms_modBC + "</modBC>");
-                    xmlString.Append("    <vBC>" + det.icms_vBC + "</vBC>");
+                    xmlString.Append("    <orig>" + det.Imposto.Icms.orig + "</orig>");
+                    xmlString.Append("    <CSOSN>" + det.Imposto.Icms.CSOSN + "</CSOSN>");
+                    xmlString.Append("    <modBC>" + det.Imposto.Icms.modBC + "</modBC>");
+                    xmlString.Append("    <vBC>" + det.Imposto.Icms.vBC + "</vBC>");
 
-                    if (!String.IsNullOrEmpty(det.icms_pRedBC))
+                    if (!String.IsNullOrEmpty(det.Imposto.Icms.pRedBC))
                     {
-                        xmlString.Append("    <pRedBC>" + det.icms_pRedBC + "</pRedBC>");
+                        xmlString.Append("    <pRedBC>" + det.Imposto.Icms.pRedBC + "</pRedBC>");
                     }
 
-                    xmlString.Append("    <pICMS>" + det.icms_pICMS + "</pICMS>");
-                    xmlString.Append("    <vICMS>" + det.icms_vICMS + "</vICMS>");
-                    xmlString.Append("    <modBCST>" + det.icms_modBCST + "</modBCST>");
+                    xmlString.Append("    <pICMS>" + det.Imposto.Icms.pICMS + "</pICMS>");
+                    xmlString.Append("    <vICMS>" + det.Imposto.Icms.vICMS + "</vICMS>");
+                    xmlString.Append("    <modBCST>" + det.Imposto.Icms.modBCST + "</modBCST>");
 
-                    if (!String.IsNullOrEmpty(det.icms_pMVAST))
+                    if (!String.IsNullOrEmpty(det.Imposto.Icms.pMVAST))
                     {
-                        xmlString.Append("    <pMVAST>" + det.icms_pMVAST + "</pMVAST>");
+                        xmlString.Append("    <pMVAST>" + det.Imposto.Icms.pMVAST + "</pMVAST>");
                     }
 
-                    if (!String.IsNullOrEmpty(det.icms_pRedBCST))
+                    if (!String.IsNullOrEmpty(det.Imposto.Icms.pRedBCST))
                     {
-                        xmlString.Append("    <pRedBCST>" + det.icms_pRedBCST + "</pRedBCST>");
+                        xmlString.Append("    <pRedBCST>" + det.Imposto.Icms.pRedBCST + "</pRedBCST>");
                     }
 
-                    xmlString.Append("    <vBCST>" + det.icms_vBCST + "</vBCST>");
-                    xmlString.Append("    <pICMSST>" + det.icms_pICMSST + "</pICMSST>");
-                    xmlString.Append("    <vICMSST>" + det.icms_vICMSST + "</vICMSST>");
-                    xmlString.Append("    <pCredSN>" + det.icms_pCredSN + "</pCredSN>");
-                    xmlString.Append("    <vCredICMSSN>" + det.icms_vCredICMSSN + "</vCredICMSSN>");
+                    xmlString.Append("    <vBCST>" + det.Imposto.Icms.vBCST + "</vBCST>");
+                    xmlString.Append("    <pICMSST>" + det.Imposto.Icms.pICMSST + "</pICMSST>");
+                    xmlString.Append("    <vICMSST>" + det.Imposto.Icms.vICMSST + "</vICMSST>");
+                    xmlString.Append("    <pCredSN>" + det.Imposto.Icms.pCredSN + "</pCredSN>");
+                    xmlString.Append("    <vCredICMSSN>" + det.Imposto.Icms.vCredICMSSN + "</vCredICMSSN>");
                     xmlString.Append("</ICMSSN900>");
                     break;
             }
@@ -604,39 +604,39 @@ namespace NFeEletronica.NotaFiscal
             xmlString.Append("</ICMS>");
         }
 
-        private void MontaDET_IPI(DET det)
+        private void MontaDET_IPI(Det det)
         {
-            if (!String.IsNullOrEmpty(det.ipi_cIEnq))
+            if (!String.IsNullOrEmpty(det.Imposto.Ipi.cIEnq))
             {
                 xmlString.Append("<IPI>");
 
-                xmlString.Append("<cEnq>" + det.ipi_cIEnq + "</cEnq>");
+                xmlString.Append("<cEnq>" + det.Imposto.Ipi.cIEnq + "</cEnq>");
 
                 switch (det.ipi)
                 {
-                    case IPI.IPI00_49_50_99:
+                    case GetIpi.IPI00_49_50_99:
                         xmlString.Append("<IPITrib>");
 
-                        xmlString.Append("    <CST>" + det.ipi_CST + "</CST>");
+                        xmlString.Append("    <CST>" + det.Imposto.Ipi.CST + "</CST>");
 
-                        if (!String.IsNullOrEmpty(det.ipi_vBC))
+                        if (!String.IsNullOrEmpty(det.Imposto.Ipi.vBC))
                         {
-                            xmlString.Append("    <vBC>" + det.ipi_vBC + "</vBC>");
-                            xmlString.Append("    <pIPI>" + det.ipi_pIPI + "</pIPI>");
+                            xmlString.Append("    <vBC>" + det.Imposto.Ipi.vBC + "</vBC>");
+                            xmlString.Append("    <pIPI>" + det.Imposto.Ipi.pIPI + "</pIPI>");
                         }
                         else
                         {
-                            xmlString.Append("    <qUnid>" + det.ipi_qUnid + "</qUnid>");
-                            xmlString.Append("    <vUnid>" + det.ipi_vUnid + "</vUnid>");
+                            xmlString.Append("    <qUnid>" + det.Imposto.Ipi.qUnid + "</qUnid>");
+                            xmlString.Append("    <vUnid>" + det.Imposto.Ipi.vUnid + "</vUnid>");
                         }
 
-                        xmlString.Append("    <vIPI>" + det.ipi_vIPI + "</vIPI>");
+                        xmlString.Append("    <vIPI>" + det.Imposto.Ipi.vIPI + "</vIPI>");
 
                         xmlString.Append("</IPITrib>");
                         break;
-                    case IPI.IPI01_55:
+                    case GetIpi.IPI01_55:
                         xmlString.Append("<IPINT>");
-                        xmlString.Append("    <CST>" + det.ipi_CST + "</CST>");
+                        xmlString.Append("    <CST>" + det.Imposto.Ipi.CST + "</CST>");
                         xmlString.Append("</IPINT>");
                         break;
                 }
@@ -645,49 +645,49 @@ namespace NFeEletronica.NotaFiscal
             }
         }
 
-        private void MontaDET_PIS(DET det)
+        private void MontaDET_PIS(Det det)
         {
             xmlString.Append("<PIS>");
 
             switch (det.pis)
             {
-                case PIS.PIS01_02:
+                case GetPis.PIS01_02:
                     xmlString.Append("<PISAliq>");
-                    xmlString.Append("    <CST>" + det.pis_CST + "</CST>");
-                    xmlString.Append("    <vBC>" + det.pis_vBC + "</vBC>");
-                    xmlString.Append("    <pPIS>" + det.pis_pPIS + "</pPIS>");
-                    xmlString.Append("    <vPIS>" + det.pis_vPIS + "</vPIS>");
+                    xmlString.Append("    <CST>" + det.Imposto.Pis.CST + "</CST>");
+                    xmlString.Append("    <vBC>" + det.Imposto.Pis.vBC + "</vBC>");
+                    xmlString.Append("    <pPIS>" + det.Imposto.Pis.pPIS + "</pPIS>");
+                    xmlString.Append("    <vPIS>" + det.Imposto.Pis.vPIS + "</vPIS>");
                     xmlString.Append("</PISAliq>");
                     break;
-                case PIS.PIS03:
+                case GetPis.PIS03:
                     xmlString.Append("<PISQtde>");
-                    xmlString.Append("    <CST>" + det.pis_CST + "</CST>");
-                    xmlString.Append("    <qBCProd>" + det.pis_qBCProd + "</qBCProd>");
-                    xmlString.Append("    <vAliqProd>" + det.pis_vAliqProd + "</vAliqProd>");
-                    xmlString.Append("    <vPIS>" + det.pis_vPIS + "</vPIS>");
+                    xmlString.Append("    <CST>" + det.Imposto.Pis.CST + "</CST>");
+                    xmlString.Append("    <qBCProd>" + det.Imposto.Pis.qBCProd + "</qBCProd>");
+                    xmlString.Append("    <vAliqProd>" + det.Imposto.Pis.vAliqProd + "</vAliqProd>");
+                    xmlString.Append("    <vPIS>" + det.Imposto.Pis.vPIS + "</vPIS>");
                     xmlString.Append("</PISQtde>");
                     break;
-                case PIS.PIS04_09:
+                case GetPis.PIS04_09:
                     xmlString.Append("<PISNT>");
-                    xmlString.Append("    <CST>" + det.pis_CST + "</CST>");
+                    xmlString.Append("    <CST>" + det.Imposto.Pis.CST + "</CST>");
                     xmlString.Append("</PISNT>");
                     break;
-                case PIS.PIS99:
+                case GetPis.PIS99:
                     xmlString.Append("<PISOutr>");
-                    xmlString.Append("    <CST>" + det.pis_CST + "</CST>");
+                    xmlString.Append("    <CST>" + det.Imposto.Pis.CST + "</CST>");
 
-                    if (!String.IsNullOrEmpty(det.pis_vBC) && !String.IsNullOrEmpty(det.pis_pPIS))
+                    if (!String.IsNullOrEmpty(det.Imposto.Pis.vBC) && !String.IsNullOrEmpty(det.Imposto.Pis.pPIS))
                     {
-                        xmlString.Append("    <vBC>" + det.pis_vBC + "</vBC>");
-                        xmlString.Append("    <pPIS>" + det.pis_pPIS + "</pPIS>");
+                        xmlString.Append("    <vBC>" + det.Imposto.Pis.vBC + "</vBC>");
+                        xmlString.Append("    <pPIS>" + det.Imposto.Pis.pPIS + "</pPIS>");
                     }
                     else
                     {
-                        xmlString.Append("    <qBCProd>" + det.pis_qBCProd + "</qBCProd>");
-                        xmlString.Append("    <vAliqProd>" + det.pis_vAliqProd + "</vAliqProd>");
+                        xmlString.Append("    <qBCProd>" + det.Imposto.Pis.qBCProd + "</qBCProd>");
+                        xmlString.Append("    <vAliqProd>" + det.Imposto.Pis.vAliqProd + "</vAliqProd>");
                     }
 
-                    xmlString.Append("    <vPIS>" + det.pis_vPIS + "</vPIS>");
+                    xmlString.Append("    <vPIS>" + det.Imposto.Pis.vPIS + "</vPIS>");
                     xmlString.Append("</PISOutr>");
                     break;
             }
@@ -695,49 +695,49 @@ namespace NFeEletronica.NotaFiscal
             xmlString.Append("</PIS>");
         }
 
-        private void MontaDET_COFINS(DET det)
+        private void MontaDET_COFINS(Det det)
         {
             xmlString.Append("<COFINS>");
 
             switch (det.cofins)
             {
-                case COFINS.CST01_02:
+                case GetCofins.CST01_02:
                     xmlString.Append("<COFINSAliq>");
-                    xmlString.Append("    <CST>" + det.cofins_CST + "</CST>");
-                    xmlString.Append("    <vBC>" + det.cofins_vBC + "</vBC>");
-                    xmlString.Append("    <pCOFINS>" + det.cofins_pCOFINS + "</pCOFINS>");
-                    xmlString.Append("    <vCOFINS>" + det.cofins_vCOFINS + "</vCOFINS>");
+                    xmlString.Append("    <CST>" + det.Imposto.Cofins.CST + "</CST>");
+                    xmlString.Append("    <vBC>" + det.Imposto.Cofins.vBC + "</vBC>");
+                    xmlString.Append("    <pCOFINS>" + det.Imposto.Cofins.pCOFINS + "</pCOFINS>");
+                    xmlString.Append("    <vCOFINS>" + det.Imposto.Cofins.vCOFINS + "</vCOFINS>");
                     xmlString.Append("</COFINSAliq>");
                     break;
-                case COFINS.CST03:
+                case GetCofins.CST03:
                     xmlString.Append("<COFINSQtde>");
-                    xmlString.Append("    <CST>" + det.cofins_CST + "</CST>");
-                    xmlString.Append("    <qBCProd>" + det.cofins_qBCProd + "</qBCProd>");
-                    xmlString.Append("    <vAliqProd>" + det.cofins_vAliqProd + "</vAliqProd>");
-                    xmlString.Append("    <vCOFINS>" + det.cofins_vCOFINS + "</vCOFINS>");
+                    xmlString.Append("    <CST>" + det.Imposto.Cofins.CST + "</CST>");
+                    xmlString.Append("    <qBCProd>" + det.Imposto.Cofins.qBCProd + "</qBCProd>");
+                    xmlString.Append("    <vAliqProd>" + det.Imposto.Cofins.vAliqProd + "</vAliqProd>");
+                    xmlString.Append("    <vCOFINS>" + det.Imposto.Cofins.vCOFINS + "</vCOFINS>");
                     xmlString.Append("</COFINSQtde>");
                     break;
-                case COFINS.CST04_09:
+                case GetCofins.CST04_09:
                     xmlString.Append("<COFINSNT>");
-                    xmlString.Append("    <CST>" + det.cofins_CST + "</CST>");
+                    xmlString.Append("    <CST>" + det.Imposto.Cofins.CST + "</CST>");
                     xmlString.Append("</COFINSNT>");
                     break;
-                case COFINS.CST99:
+                case GetCofins.CST99:
                     xmlString.Append("<COFINSOutr>");
-                    xmlString.Append("    <CST>" + det.cofins_CST + "</CST>");
+                    xmlString.Append("    <CST>" + det.Imposto.Cofins.CST + "</CST>");
 
-                    if (!String.IsNullOrEmpty(det.cofins_vBC) && !String.IsNullOrEmpty(det.cofins_pCOFINS))
+                    if (!String.IsNullOrEmpty(det.Imposto.Cofins.vBC) && !String.IsNullOrEmpty(det.Imposto.Cofins.pCOFINS))
                     {
-                        xmlString.Append("    <vBC>" + det.cofins_vBC + "</vBC>");
-                        xmlString.Append("    <pCOFINS>" + det.cofins_pCOFINS + "</pCOFINS>");
+                        xmlString.Append("    <vBC>" + det.Imposto.Cofins.vBC + "</vBC>");
+                        xmlString.Append("    <pCOFINS>" + det.Imposto.Cofins.pCOFINS + "</pCOFINS>");
                     }
                     else
                     {
-                        xmlString.Append("    <qBCProd>" + det.cofins_qBCProd + "</qBCProd>");
-                        xmlString.Append("    <vAliqProd>" + det.cofins_vAliqProd + "</vAliqProd>");
+                        xmlString.Append("    <qBCProd>" + det.Imposto.Cofins.qBCProd + "</qBCProd>");
+                        xmlString.Append("    <vAliqProd>" + det.Imposto.Cofins.vAliqProd + "</vAliqProd>");
                     }
 
-                    xmlString.Append("    <vCOFINS>" + det.cofins_vCOFINS + "</vCOFINS>");
+                    xmlString.Append("    <vCOFINS>" + det.Imposto.Cofins.vCOFINS + "</vCOFINS>");
                     xmlString.Append("</COFINSOutr>");
                     break;
             }
@@ -749,25 +749,25 @@ namespace NFeEletronica.NotaFiscal
         {
             xmlString.Append("<total>");
             xmlString.Append("	<ICMSTot>");
-            xmlString.Append("		<vBC>" + total.vBC + "</vBC>");
-            xmlString.Append("		<vICMS>" + total.vICMS + "</vICMS>");
+            xmlString.Append("		<vBC>" + total.IcmsTotal.vBC + "</vBC>");
+            xmlString.Append("		<vICMS>" + total.IcmsTotal.vICMS + "</vICMS>");
             if (nFeContexto.Versao == NFeVersao.VERSAO_3_1_0)
-                xmlString.Append("		<vICMSDeson>" + total.vICMSDeson + "</vICMSDeson>");
-            xmlString.Append("		<vBCST>" + total.vBCST + "</vBCST>");
-            xmlString.Append("		<vST>" + total.vST + "</vST>");
-            xmlString.Append("		<vProd>" + total.vProd + "</vProd>");
-            xmlString.Append("		<vFrete>" + total.vFrete + "</vFrete>");
-            xmlString.Append("		<vSeg>" + total.vSeg + "</vSeg>");
-            xmlString.Append("		<vDesc>" + total.vDesc + "</vDesc>");
+                xmlString.Append("		<vICMSDeson>" + total.IcmsTotal.vICMSDeson + "</vICMSDeson>");
+            xmlString.Append("		<vBCST>" + total.IcmsTotal.vBCST + "</vBCST>");
+            xmlString.Append("		<vST>" + total.IcmsTotal.vST + "</vST>");
+            xmlString.Append("		<vProd>" + total.IcmsTotal.vProd + "</vProd>");
+            xmlString.Append("		<vFrete>" + total.IcmsTotal.vFrete + "</vFrete>");
+            xmlString.Append("		<vSeg>" + total.IcmsTotal.vSeg + "</vSeg>");
+            xmlString.Append("		<vDesc>" + total.IcmsTotal.vDesc + "</vDesc>");
             xmlString.Append("		<vII>0.00</vII>");
-            xmlString.Append("		<vIPI>" + total.vIPI + "</vIPI>");
+            xmlString.Append("		<vIPI>" + total.IcmsTotal.vIPI + "</vIPI>");
             xmlString.Append("		<vPIS>0.00</vPIS>");
             xmlString.Append("		<vCOFINS>0.00</vCOFINS>");
-            xmlString.Append("		<vOutro>" + total.vOutro + "</vOutro>");
-            xmlString.Append("		<vNF>" + total.vNF + "</vNF>");
+            xmlString.Append("		<vOutro>" + total.IcmsTotal.vOutro + "</vOutro>");
+            xmlString.Append("		<vNF>" + total.IcmsTotal.vNF + "</vNF>");
 
-            if (!string.IsNullOrEmpty(total.vTotTrib))
-                xmlString.Append("		<vTotTrib>" + total.vTotTrib + "</vTotTrib>");
+            if (!string.IsNullOrEmpty(total.IcmsTotal.vTotTrib))
+                xmlString.Append("		<vTotTrib>" + total.IcmsTotal.vTotTrib + "</vTotTrib>");
 
             xmlString.Append("	</ICMSTot>");
             xmlString.Append("</total>");
@@ -785,7 +785,7 @@ namespace NFeEletronica.NotaFiscal
                 if (!String.IsNullOrEmpty(transp.CNPJ))
                     xmlString.Append("		<CNPJ>" + transp.CNPJ + "</CNPJ>");
 
-                /* 
+                /*
                 if(!String.IsNullOrEmpty(this.transp.CPF))
                     this.XmlString.Append("		<CPF>" + this.transp.CPF + "</CPF>");
                 */
@@ -823,26 +823,26 @@ namespace NFeEletronica.NotaFiscal
                 xmlString.Append("	</veicTransp>");
             }
 
-            if (!String.IsNullOrEmpty(transp.qVol))
+            if (!String.IsNullOrEmpty(transp.Vol.qVol))
             {
                 xmlString.Append("	<vol>");
-                xmlString.Append("		<qVol>" + transp.qVol + "</qVol>");
-                xmlString.Append("		<esp>" + transp.esp + "</esp>");
+                xmlString.Append("		<qVol>" + transp.Vol.qVol + "</qVol>");
+                xmlString.Append("		<esp>" + transp.Vol.esp + "</esp>");
 
 
-                if (!String.IsNullOrEmpty(transp.marca))
+                if (!String.IsNullOrEmpty(transp.Vol.marca))
                 {
-                    xmlString.Append("		<marca>" + transp.marca + "</marca>");
+                    xmlString.Append("		<marca>" + transp.Vol.marca + "</marca>");
                 }
 
-                if (!String.IsNullOrEmpty(transp.nVol))
-                    xmlString.Append("		<nVol>" + transp.nVol + "</nVol>");
+                if (!String.IsNullOrEmpty(transp.Vol.nVol))
+                    xmlString.Append("		<nVol>" + transp.Vol.nVol + "</nVol>");
 
-                if (!String.IsNullOrEmpty(transp.pesoL))
-                    xmlString.Append("		<pesoL>" + transp.pesoL + "</pesoL>");
+                if (!String.IsNullOrEmpty(transp.Vol.pesoL))
+                    xmlString.Append("		<pesoL>" + transp.Vol.pesoL + "</pesoL>");
 
-                if (!String.IsNullOrEmpty(transp.pesoB))
-                    xmlString.Append("		<pesoB>" + transp.pesoB + "</pesoB>");
+                if (!String.IsNullOrEmpty(transp.Vol.pesoB))
+                    xmlString.Append("		<pesoB>" + transp.Vol.pesoB + "</pesoB>");
 
                 xmlString.Append("	</vol>");
             }
@@ -851,13 +851,13 @@ namespace NFeEletronica.NotaFiscal
 
         private void MontaCOBR()
         {
-            if (!String.IsNullOrEmpty(cobr.nFat))
+            if (!String.IsNullOrEmpty(cobr.Fat.nFat))
             {
                 xmlString.Append("<cobr>");
                 xmlString.Append("	<fat>");
-                xmlString.Append("		<nFat>" + cobr.nFat + "</nFat>");
-                xmlString.Append("		<vOrig>" + cobr.vOrig + "</vOrig>");
-                xmlString.Append("		<vLiq>" + cobr.vLiq + "</vLiq>");
+                xmlString.Append("		<nFat>" + cobr.Fat.nFat + "</nFat>");
+                xmlString.Append("		<vOrig>" + cobr.Fat.vOrig + "</vOrig>");
+                xmlString.Append("		<vLiq>" + cobr.Fat.vLiq + "</vLiq>");
                 xmlString.Append("	</fat>");
 
                 for (var i = 0; i < cobr.dup.Count; i++)

@@ -1,25 +1,24 @@
-﻿using System;
+﻿#region
+
 using System.Collections.Generic;
+using System.Xml.Serialization;
+
+#endregion
 
 namespace NFeEletronica.NotaFiscal
 {
-    public class COBR
+    [XmlRoot("cobr", Namespace = "http://www.portalfiscal.inf.br/nfe", IsNullable = false)]
+    public class Cobr
     {
-        public COBR()
+        public Cobr()
         {
             dup = new List<DUP>();
         }
 
-        public String nFat { get; set; }
-        public String vOrig { get; set; }
-        public String vLiq { get; set; }
-        public List<DUP> dup { get; set; }
-    }
+        [XmlElement("fat")]
+        public Fat Fat { get; set; }
 
-    public class DUP
-    {
-        public String nDup { get; set; }
-        public String dVenc { get; set; }
-        public String vDup { get; set; }
+        [XmlElement("dup")]
+        public List<DUP> dup { get; set; }
     }
 }

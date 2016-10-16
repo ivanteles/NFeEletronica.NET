@@ -1,31 +1,42 @@
 ﻿using System;
+using System.Xml.Serialization;
 
 namespace NFeEletronica.NotaFiscal
 {
-    public class EMIT
+    [XmlRoot("emit", Namespace = "http://www.portalfiscal.inf.br/nfe", IsNullable = false)]
+    public class Emit
     {
-        public EMIT()
+        public Emit()
         {
             //valores padrão
-            cPais = "1058";
-            xPais = "BRASIL";
             IE = "ISENTO";
         }
 
+        [XmlElement("CPF")]
         public String CPF { get; set; }
+
+        [XmlElement("CNPJ")]
         public String CNPJ { get; set; }
+
+        [XmlElement("xNome")]
         public String xNome { get; set; }
-        public String xLgr { get; set; }
-        public String nro { get; set; }
-        public String xBairro { get; set; }
-        public String cMun { get; set; }
-        public String xMun { get; set; }
-        public String UF { get; set; }
-        public String CEP { get; set; }
-        public String cPais { get; set; }
-        public String xPais { get; set; }
-        public String fone { get; set; }
+
+        [XmlElement("xFant")]
+        public String xFant { get; set; }
+
+        [XmlElement("enderEmit")]
+        public EnderEmit EnderEmit { get; set; }
+
+        [XmlElement("IE")]
         public String IE { get; set; }
+
+        [XmlElement("IM")]
+        public String IM { get; set; }
+
+        [XmlElement("CNAE")]
+        public String CNAE { get; set; }
+
+        [XmlElement("CRT")]
         public String CRT { get; set; }
     }
 }
