@@ -1,4 +1,6 @@
-﻿using System;
+﻿#region
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -7,17 +9,19 @@ using NFeEletronica.Contexto;
 using NFeEletronica.Utils;
 using NFeEletronica.Versao;
 
+#endregion
+
 namespace NFeEletronica.NotaFiscal
 {
     public class Nota
     {
-        private readonly List<Det> detList;
         private readonly INFeContexto nFeContexto;
         private readonly StringBuilder xmlString;
-        public String ArquivoNome = "";
-        public String CaminhoFisico = "";
-        public String ConteudoXml = "";
-        public String NotaId = "";
+        public string ArquivoNome = "";
+        public string CaminhoFisico = "";
+        public string ConteudoXml = "";
+        public List<Det> detList;
+        public string NotaId = "";
 
         public Nota(INFeContexto nFeContexto)
         {
@@ -39,12 +43,12 @@ namespace NFeEletronica.NotaFiscal
                 ide.tpAmb = "2";
         }
 
-        public Nota(String arquivoNotaXml)
+        public Nota(string arquivoNotaXml)
         {
             if (!File.Exists(arquivoNotaXml))
-            {
                 throw new Exception("O arquivo de nota para envio não existe: " + arquivoNotaXml);
-            }
+
+            detList = new List<Det>();
 
             var xmlDoc = new XmlDocument();
             xmlDoc.Load(arquivoNotaXml);
@@ -59,14 +63,14 @@ namespace NFeEletronica.NotaFiscal
         public Total total { get; set; }
         public Transp transp { get; set; }
         public Cobr cobr { get; set; }
-        public String infAdic { get; set; }
+        public string infAdic { get; set; }
 
         public void AddDet(Det det)
         {
             detList.Add(det);
         }
 
-        public String GerarCodigoDaNota()
+        public string GerarCodigoDaNota()
         {
             if (!nFeContexto.Producao)
             {
@@ -78,9 +82,9 @@ namespace NFeEletronica.NotaFiscal
             var codigoNumerico = random.Next(10000000, 99999999).ToString("D8");
             ide.cNF = codigoNumerico;
 
-            var result = ide.cUF + ide.dEmi.Replace("-", "").Substring(2, 4) + emit.CNPJ +
-                         Int32.Parse(ide.mod).ToString("D2") + Int32.Parse(ide.serie).ToString("D3") +
-                         Int32.Parse(ide.nNF).ToString("D9") + Int32.Parse(ide.tpEmis).ToString("D1") +
+            var result = ide.cUF + ide.dhEmi.Replace("-", "").Substring(2, 4) + emit.CNPJ +
+                         int.Parse(ide.mod).ToString("D2") + int.Parse(ide.serie).ToString("D3") +
+                         int.Parse(ide.nNF).ToString("D9") + int.Parse(ide.tpEmis).ToString("D1") +
                          codigoNumerico;
             var digitoVerificador = Util.GerarModulo11(result);
 
@@ -92,7 +96,7 @@ namespace NFeEletronica.NotaFiscal
             return NotaId;
         }
 
-        public void SalvarNota(String caminho)
+        public void SalvarNota(string caminho)
         {
             //GerarCodigoDaNota();
 
@@ -106,9 +110,10 @@ namespace NFeEletronica.NotaFiscal
             MontaDET();
             MontaTOTAL();
             MontaTRANSP();
-            MontaCOBR();
+            if (cobr != null)
+                MontaCOBR();
 
-            if (!String.IsNullOrEmpty(infAdic))
+            if (!string.IsNullOrEmpty(infAdic))
             {
                 xmlString.Append("<infAdic>");
                 xmlString.Append("	<infCpl>");
@@ -157,15 +162,11 @@ namespace NFeEletronica.NotaFiscal
             xmlString.Append("	<nNF>" + ide.nNF + "</nNF>");
 
             if (nFeContexto.Versao == NFeVersao.VERSAO_3_1_0)
-            {
                 xmlString.Append("	<dhEmi>" + ide.dhEmi + "</dhEmi>");
-            }
             else
-            {
                 xmlString.Append("	<dEmi>" + ide.dEmi + "</dEmi>");
-            }
 
-            if (!String.IsNullOrEmpty(ide.dhSaiEnt))
+            if (!string.IsNullOrEmpty(ide.dhSaiEnt))
                 xmlString.Append("	<dhSaiEnt>" + ide.dhSaiEnt + "</dhSaiEnt>");
 
             xmlString.Append("	<tpNF>" + ide.tpNF + "</tpNF>");
@@ -196,14 +197,10 @@ namespace NFeEletronica.NotaFiscal
         {
             xmlString.Append("<emit>");
 
-            if (!String.IsNullOrEmpty(emit.CPF))
-            {
+            if (!string.IsNullOrEmpty(emit.CPF))
                 xmlString.Append("	<CPF>" + emit.CPF + "</CPF>");
-            }
-            if (!String.IsNullOrEmpty(emit.CNPJ))
-            {
+            if (!string.IsNullOrEmpty(emit.CNPJ))
                 xmlString.Append("	<CNPJ>" + emit.CNPJ + "</CNPJ>");
-            }
 
             xmlString.Append("	<xNome>" + emit.xNome + "</xNome>");
             xmlString.Append("	<enderEmit>");
@@ -217,7 +214,7 @@ namespace NFeEletronica.NotaFiscal
             xmlString.Append("		<cPais>1058</cPais>");
             xmlString.Append("		<xPais>BRASIL</xPais>");
 
-            if (!String.IsNullOrEmpty(emit.EnderEmit.fone))
+            if (!string.IsNullOrEmpty(emit.EnderEmit.fone))
                 xmlString.Append("		<fone>" + emit.EnderEmit.fone + "</fone>");
 
             xmlString.Append("	</enderEmit>");
@@ -231,57 +228,47 @@ namespace NFeEletronica.NotaFiscal
         {
             xmlString.Append("<dest>");
 
-            if (!String.IsNullOrEmpty(dest.CPF))
-            {
+            if (!string.IsNullOrEmpty(dest.CPF))
                 xmlString.Append("	<CPF>" + dest.CPF + "</CPF>");
-            }
 
-            if (!String.IsNullOrEmpty(dest.CNPJ))
-            {
+            if (!string.IsNullOrEmpty(dest.CNPJ))
                 xmlString.Append("	<CNPJ>" + dest.CNPJ + "</CNPJ>");
-            }
 
-            if (!String.IsNullOrEmpty(dest.idEstrangeiro))
-            {
+            if (!string.IsNullOrEmpty(dest.idEstrangeiro))
                 xmlString.Append("	<idEstrangeiro>" + dest.idEstrangeiro + "</idEstrangeiro>");
-            }
 
             xmlString.Append("	<xNome>" + dest.xNome + "</xNome>");
             xmlString.Append("	<enderDest>");
             xmlString.Append("		<xLgr>" + dest.EnderDest.xLgr + "</xLgr>");
             xmlString.Append("		<nro>" + dest.EnderDest.nro + "</nro>");
 
-            if (!String.IsNullOrEmpty(dest.EnderDest.xCpl))
-            {
+            if (!string.IsNullOrEmpty(dest.EnderDest.xCpl))
                 xmlString.Append("		<xCpl>" + dest.EnderDest.xCpl + "</xCpl>");
-            }
 
             xmlString.Append("		<xBairro>" + dest.EnderDest.xBairro + "</xBairro>");
             xmlString.Append("		<cMun>" + dest.EnderDest.cMun + "</cMun>");
             xmlString.Append("		<xMun>" + dest.EnderDest.xMun + "</xMun>");
             xmlString.Append("		<UF>" + dest.EnderDest.UF.Trim() + "</UF>");
 
-            if (!String.IsNullOrEmpty(dest.EnderDest.CEP))
+            if (!string.IsNullOrEmpty(dest.EnderDest.CEP))
                 xmlString.Append("		<CEP>" + dest.EnderDest.CEP + "</CEP>");
 
             xmlString.Append("		<cPais>1058</cPais>");
             xmlString.Append("		<xPais>BRASIL</xPais>");
 
-            if (!String.IsNullOrEmpty(dest.fone))
+            if (!string.IsNullOrEmpty(dest.fone))
                 xmlString.Append("		<fone>" + dest.fone + "</fone>");
 
             xmlString.Append("	</enderDest>");
 
             if (nFeContexto.Versao == NFeVersao.VERSAO_3_1_0)
-            {
                 xmlString.Append("	<indIEDest>" + dest.indIEDest + "</indIEDest>");
-            }
 
 
             xmlString.Append("	<IE>" + dest.IE + "</IE>");
 
 
-            if (nFeContexto.Versao == NFeVersao.VERSAO_3_1_0 && !String.IsNullOrEmpty(dest.email))
+            if ((nFeContexto.Versao == NFeVersao.VERSAO_3_1_0) && !string.IsNullOrEmpty(dest.email))
                 xmlString.Append("	<email>" + dest.email + "</email>");
 
             xmlString.Append("</dest>");
@@ -307,14 +294,10 @@ namespace NFeEletronica.NotaFiscal
                 xmlString.Append("		<qTrib>" + detList[i].Prod.qTrib + "</qTrib>");
                 xmlString.Append("		<vUnTrib>" + detList[i].Prod.vUnTrib + "</vUnTrib>");
 
-                if (!String.IsNullOrEmpty(detList[i].Prod.vFrete))
-                {
+                if (!string.IsNullOrEmpty(detList[i].Prod.vFrete))
                     xmlString.Append("		<vFrete>" + detList[i].Prod.vFrete + "</vFrete>");
-                }
-                if (!String.IsNullOrEmpty(detList[i].Prod.vDesc))
-                {
+                if (!string.IsNullOrEmpty(detList[i].Prod.vDesc))
                     xmlString.Append("		<vDesc>" + detList[i].Prod.vDesc + "</vDesc>");
-                }
 
                 xmlString.Append("		<indTot>" + detList[i].Prod.indTot + "</indTot>");
                 xmlString.Append("	</prod>");
@@ -324,11 +307,17 @@ namespace NFeEletronica.NotaFiscal
                 if (!string.IsNullOrEmpty(detList[i].Prod.vTotTrib))
                     xmlString.Append("	<vTotTrib>" + detList[i].Prod.vTotTrib + "</vTotTrib>");
 
-                MontaDET_ICMS(detList[i]);
-                MontaDET_IPI(detList[i]);
-                MontaDET_PIS(detList[i]);
-                MontaDET_COFINS(detList[i]);
+                if (detList[i].Imposto.Icms != null)
+                    MontaDET_ICMS(detList[i]);
+                if (detList[i].Imposto.Ipi != null)
+                    MontaDET_IPI(detList[i]);
+                if (detList[i].Imposto.Pis != null)
+                    MontaDET_PIS(detList[i]);
+                if (detList[i].Imposto.Cofins != null)
+                    MontaDET_COFINS(detList[i]);
 
+                if (detList[i].Imposto.Issqn != null)
+                    MontaDET_ISQN(detList[i]);
                 xmlString.Append("	</imposto>");
 
                 xmlString.Append("</det>");
@@ -361,15 +350,11 @@ namespace NFeEletronica.NotaFiscal
                     xmlString.Append("    <vICMS>" + det.Imposto.Icms.vICMS + "</vICMS>");
                     xmlString.Append("    <modBCST>" + det.Imposto.Icms.modBCST + "</modBCST>");
 
-                    if (!String.IsNullOrEmpty(det.Imposto.Icms.pMVAST))
-                    {
+                    if (!string.IsNullOrEmpty(det.Imposto.Icms.pMVAST))
                         xmlString.Append("    <pMVAST>" + det.Imposto.Icms.pMVAST + "</pMVAST>");
-                    }
 
-                    if (!String.IsNullOrEmpty(det.Imposto.Icms.pRedBCST))
-                    {
+                    if (!string.IsNullOrEmpty(det.Imposto.Icms.pRedBCST))
                         xmlString.Append("    <pRedBCST>" + det.Imposto.Icms.pRedBCST + "</pRedBCST>");
-                    }
 
                     xmlString.Append("    <vBCST>" + det.Imposto.Icms.vBCST + "</vBCST>");
                     xmlString.Append("    <pICMSST>" + det.Imposto.Icms.pICMSST + "</pICMSST>");
@@ -412,30 +397,20 @@ namespace NFeEletronica.NotaFiscal
                     xmlString.Append("    <CST>" + det.Imposto.Icms.CST + "</CST>");
                     xmlString.Append("</ICMS51>");
 
-                    if (!String.IsNullOrEmpty(det.Imposto.Icms.pRedBCST))
-                    {
+                    if (!string.IsNullOrEmpty(det.Imposto.Icms.pRedBCST))
                         xmlString.Append("    <modBC>" + det.Imposto.Icms.modBC + "</modBC>");
-                    }
 
-                    if (!String.IsNullOrEmpty(det.Imposto.Icms.pRedBCST))
-                    {
+                    if (!string.IsNullOrEmpty(det.Imposto.Icms.pRedBCST))
                         xmlString.Append("    <pRedBC>" + det.Imposto.Icms.pRedBC + "</pRedBC>");
-                    }
 
-                    if (!String.IsNullOrEmpty(det.Imposto.Icms.pRedBCST))
-                    {
+                    if (!string.IsNullOrEmpty(det.Imposto.Icms.pRedBCST))
                         xmlString.Append("    <vBC>" + det.Imposto.Icms.vBC + "</vBC>");
-                    }
 
-                    if (!String.IsNullOrEmpty(det.Imposto.Icms.pRedBCST))
-                    {
+                    if (!string.IsNullOrEmpty(det.Imposto.Icms.pRedBCST))
                         xmlString.Append("    <pICMS>" + det.Imposto.Icms.pICMS + "</pICMS>");
-                    }
 
-                    if (!String.IsNullOrEmpty(det.Imposto.Icms.pRedBCST))
-                    {
+                    if (!string.IsNullOrEmpty(det.Imposto.Icms.pRedBCST))
                         xmlString.Append("    <vICMS>" + det.Imposto.Icms.vICMS + "</vICMS>");
-                    }
                     break;
                 case GetIcms.ICMS60:
                     xmlString.Append("<ICMS60>");
@@ -454,15 +429,11 @@ namespace NFeEletronica.NotaFiscal
                     xmlString.Append("    <vICMS>" + det.Imposto.Icms.vICMS + "</vICMS>");
                     xmlString.Append("    <modBCST>" + det.Imposto.Icms.modBCST + "</modBCST>");
 
-                    if (!String.IsNullOrEmpty(det.Imposto.Icms.pMVAST))
-                    {
+                    if (!string.IsNullOrEmpty(det.Imposto.Icms.pMVAST))
                         xmlString.Append("    <pMVAST>" + det.Imposto.Icms.pMVAST + "</pMVAST>");
-                    }
 
-                    if (!String.IsNullOrEmpty(det.Imposto.Icms.pRedBCST))
-                    {
+                    if (!string.IsNullOrEmpty(det.Imposto.Icms.pRedBCST))
                         xmlString.Append("    <pRedBCST>" + det.Imposto.Icms.pRedBCST + "</pRedBCST>");
-                    }
 
                     xmlString.Append("    <vBCST>" + det.Imposto.Icms.vBCST + "</vBCST>");
                     xmlString.Append("    <pICMSST>" + det.Imposto.Icms.pICMSST + "</pICMSST>");
@@ -476,24 +447,18 @@ namespace NFeEletronica.NotaFiscal
                     xmlString.Append("    <modBC>" + det.Imposto.Icms.modBC + "</modBC>");
                     xmlString.Append("    <vBC>" + det.Imposto.Icms.vBC + "</vBC>");
 
-                    if (!String.IsNullOrEmpty(det.Imposto.Icms.pRedBC))
-                    {
+                    if (!string.IsNullOrEmpty(det.Imposto.Icms.pRedBC))
                         xmlString.Append("    <pRedBC>" + det.Imposto.Icms.pRedBC + "</pRedBC>");
-                    }
 
                     xmlString.Append("    <pICMS>" + det.Imposto.Icms.pICMS + "</pICMS>");
                     xmlString.Append("    <vICMS>" + det.Imposto.Icms.vICMS + "</vICMS>");
                     xmlString.Append("    <modBCST>" + det.Imposto.Icms.modBCST + "</modBCST>");
 
-                    if (!String.IsNullOrEmpty(det.Imposto.Icms.pMVAST))
-                    {
+                    if (!string.IsNullOrEmpty(det.Imposto.Icms.pMVAST))
                         xmlString.Append("    <pMVAST>" + det.Imposto.Icms.pMVAST + "</pMVAST>");
-                    }
 
-                    if (!String.IsNullOrEmpty(det.Imposto.Icms.pRedBCST))
-                    {
+                    if (!string.IsNullOrEmpty(det.Imposto.Icms.pRedBCST))
                         xmlString.Append("    <pRedBCST>" + det.Imposto.Icms.pRedBCST + "</pRedBCST>");
-                    }
 
                     xmlString.Append("    <vBCST>" + det.Imposto.Icms.vBCST + "</vBCST>");
                     xmlString.Append("    <pICMSST>" + det.Imposto.Icms.pICMSST + "</pICMSST>");
@@ -520,15 +485,11 @@ namespace NFeEletronica.NotaFiscal
                     xmlString.Append("    <CSOSN>" + det.Imposto.Icms.CSOSN + "</CSOSN>");
                     xmlString.Append("    <modBCST>" + det.Imposto.Icms.modBCST + "</modBCST>");
 
-                    if (!String.IsNullOrEmpty(det.Imposto.Icms.pRedBCST))
-                    {
+                    if (!string.IsNullOrEmpty(det.Imposto.Icms.pRedBCST))
                         xmlString.Append("    <pMVAST>" + det.Imposto.Icms.pMVAST + "</pMVAST>");
-                    }
 
-                    if (!String.IsNullOrEmpty(det.Imposto.Icms.pRedBCST))
-                    {
+                    if (!string.IsNullOrEmpty(det.Imposto.Icms.pRedBCST))
                         xmlString.Append("    <pRedBCST>" + det.Imposto.Icms.pRedBCST + "</pRedBCST>");
-                    }
 
                     xmlString.Append("    <vBCST>" + det.Imposto.Icms.vBCST + "</vBCST>");
                     xmlString.Append("    <pICMSST>" + det.Imposto.Icms.pICMSST + "</pICMSST>");
@@ -542,15 +503,11 @@ namespace NFeEletronica.NotaFiscal
                     xmlString.Append("    <CSOSN>" + det.Imposto.Icms.CSOSN + "</CSOSN>");
                     xmlString.Append("    <modBCST>" + det.Imposto.Icms.modBCST + "</modBCST>");
 
-                    if (!String.IsNullOrEmpty(det.Imposto.Icms.pMVAST))
-                    {
+                    if (!string.IsNullOrEmpty(det.Imposto.Icms.pMVAST))
                         xmlString.Append("    <pMVAST>" + det.Imposto.Icms.pMVAST + "</pMVAST>");
-                    }
 
-                    if (!String.IsNullOrEmpty(det.Imposto.Icms.pRedBCST))
-                    {
+                    if (!string.IsNullOrEmpty(det.Imposto.Icms.pRedBCST))
                         xmlString.Append("    <pRedBCST>" + det.Imposto.Icms.pRedBCST + "</pRedBCST>");
-                    }
 
                     xmlString.Append("    <vBCST>" + det.Imposto.Icms.vBCST + "</vBCST>");
                     xmlString.Append("    <pICMSST>" + det.Imposto.Icms.pICMSST + "</pICMSST>");
@@ -573,24 +530,18 @@ namespace NFeEletronica.NotaFiscal
                     xmlString.Append("    <modBC>" + det.Imposto.Icms.modBC + "</modBC>");
                     xmlString.Append("    <vBC>" + det.Imposto.Icms.vBC + "</vBC>");
 
-                    if (!String.IsNullOrEmpty(det.Imposto.Icms.pRedBC))
-                    {
+                    if (!string.IsNullOrEmpty(det.Imposto.Icms.pRedBC))
                         xmlString.Append("    <pRedBC>" + det.Imposto.Icms.pRedBC + "</pRedBC>");
-                    }
 
                     xmlString.Append("    <pICMS>" + det.Imposto.Icms.pICMS + "</pICMS>");
                     xmlString.Append("    <vICMS>" + det.Imposto.Icms.vICMS + "</vICMS>");
                     xmlString.Append("    <modBCST>" + det.Imposto.Icms.modBCST + "</modBCST>");
 
-                    if (!String.IsNullOrEmpty(det.Imposto.Icms.pMVAST))
-                    {
+                    if (!string.IsNullOrEmpty(det.Imposto.Icms.pMVAST))
                         xmlString.Append("    <pMVAST>" + det.Imposto.Icms.pMVAST + "</pMVAST>");
-                    }
 
-                    if (!String.IsNullOrEmpty(det.Imposto.Icms.pRedBCST))
-                    {
+                    if (!string.IsNullOrEmpty(det.Imposto.Icms.pRedBCST))
                         xmlString.Append("    <pRedBCST>" + det.Imposto.Icms.pRedBCST + "</pRedBCST>");
-                    }
 
                     xmlString.Append("    <vBCST>" + det.Imposto.Icms.vBCST + "</vBCST>");
                     xmlString.Append("    <pICMSST>" + det.Imposto.Icms.pICMSST + "</pICMSST>");
@@ -606,7 +557,7 @@ namespace NFeEletronica.NotaFiscal
 
         private void MontaDET_IPI(Det det)
         {
-            if (!String.IsNullOrEmpty(det.Imposto.Ipi.cIEnq))
+            if (!string.IsNullOrEmpty(det.Imposto.Ipi.cIEnq))
             {
                 xmlString.Append("<IPI>");
 
@@ -619,7 +570,7 @@ namespace NFeEletronica.NotaFiscal
 
                         xmlString.Append("    <CST>" + det.Imposto.Ipi.CST + "</CST>");
 
-                        if (!String.IsNullOrEmpty(det.Imposto.Ipi.vBC))
+                        if (!string.IsNullOrEmpty(det.Imposto.Ipi.vBC))
                         {
                             xmlString.Append("    <vBC>" + det.Imposto.Ipi.vBC + "</vBC>");
                             xmlString.Append("    <pIPI>" + det.Imposto.Ipi.pIPI + "</pIPI>");
@@ -676,7 +627,7 @@ namespace NFeEletronica.NotaFiscal
                     xmlString.Append("<PISOutr>");
                     xmlString.Append("    <CST>" + det.Imposto.Pis.CST + "</CST>");
 
-                    if (!String.IsNullOrEmpty(det.Imposto.Pis.vBC) && !String.IsNullOrEmpty(det.Imposto.Pis.pPIS))
+                    if (!string.IsNullOrEmpty(det.Imposto.Pis.vBC) && !string.IsNullOrEmpty(det.Imposto.Pis.pPIS))
                     {
                         xmlString.Append("    <vBC>" + det.Imposto.Pis.vBC + "</vBC>");
                         xmlString.Append("    <pPIS>" + det.Imposto.Pis.pPIS + "</pPIS>");
@@ -726,7 +677,8 @@ namespace NFeEletronica.NotaFiscal
                     xmlString.Append("<COFINSOutr>");
                     xmlString.Append("    <CST>" + det.Imposto.Cofins.CST + "</CST>");
 
-                    if (!String.IsNullOrEmpty(det.Imposto.Cofins.vBC) && !String.IsNullOrEmpty(det.Imposto.Cofins.pCOFINS))
+                    if (!string.IsNullOrEmpty(det.Imposto.Cofins.vBC) &&
+                        !string.IsNullOrEmpty(det.Imposto.Cofins.pCOFINS))
                     {
                         xmlString.Append("    <vBC>" + det.Imposto.Cofins.vBC + "</vBC>");
                         xmlString.Append("    <pCOFINS>" + det.Imposto.Cofins.pCOFINS + "</pCOFINS>");
@@ -745,31 +697,57 @@ namespace NFeEletronica.NotaFiscal
             xmlString.Append("</COFINS>");
         }
 
+        private void MontaDET_ISQN(Det det)
+        {
+            xmlString.Append("<ISSQN>");
+            xmlString.Append("    <vBC>" + det.Imposto.Issqn.vBC + "</vBC>");
+            xmlString.Append("    <vAliq>" + det.Imposto.Issqn.vAliq + "</vAliq>");
+            xmlString.Append("    <vISSQN>" + det.Imposto.Issqn.vISSQN + "</vISSQN>");
+            xmlString.Append("    <cMunFG>" + det.Imposto.Issqn.cMunFG + "</cMunFG>");
+            xmlString.Append("    <cListServ>" + det.Imposto.Issqn.cListServ + "</cListServ>");
+            xmlString.Append("    <indISS>" + det.Imposto.Issqn.indISS + "</indISS>");
+            xmlString.Append("    <indIncentivo>" + det.Imposto.Issqn.indIncentivo + "</indIncentivo>");
+            xmlString.Append("</ISSQN>");
+        }
+
         private void MontaTOTAL()
         {
             xmlString.Append("<total>");
-            xmlString.Append("	<ICMSTot>");
-            xmlString.Append("		<vBC>" + total.IcmsTotal.vBC + "</vBC>");
-            xmlString.Append("		<vICMS>" + total.IcmsTotal.vICMS + "</vICMS>");
-            if (nFeContexto.Versao == NFeVersao.VERSAO_3_1_0)
-                xmlString.Append("		<vICMSDeson>" + total.IcmsTotal.vICMSDeson + "</vICMSDeson>");
-            xmlString.Append("		<vBCST>" + total.IcmsTotal.vBCST + "</vBCST>");
-            xmlString.Append("		<vST>" + total.IcmsTotal.vST + "</vST>");
-            xmlString.Append("		<vProd>" + total.IcmsTotal.vProd + "</vProd>");
-            xmlString.Append("		<vFrete>" + total.IcmsTotal.vFrete + "</vFrete>");
-            xmlString.Append("		<vSeg>" + total.IcmsTotal.vSeg + "</vSeg>");
-            xmlString.Append("		<vDesc>" + total.IcmsTotal.vDesc + "</vDesc>");
-            xmlString.Append("		<vII>0.00</vII>");
-            xmlString.Append("		<vIPI>" + total.IcmsTotal.vIPI + "</vIPI>");
-            xmlString.Append("		<vPIS>0.00</vPIS>");
-            xmlString.Append("		<vCOFINS>0.00</vCOFINS>");
-            xmlString.Append("		<vOutro>" + total.IcmsTotal.vOutro + "</vOutro>");
-            xmlString.Append("		<vNF>" + total.IcmsTotal.vNF + "</vNF>");
+            if (total.IcmsTotal != null)
+            {
+                xmlString.Append("	<ICMSTot>");
+                xmlString.Append("		<vBC>" + total.IcmsTotal.vBC + "</vBC>");
+                xmlString.Append("		<vICMS>" + total.IcmsTotal.vICMS + "</vICMS>");
+                if (nFeContexto.Versao == NFeVersao.VERSAO_3_1_0)
+                    xmlString.Append("		<vICMSDeson>" + total.IcmsTotal.vICMSDeson + "</vICMSDeson>");
+                xmlString.Append("		<vBCST>" + total.IcmsTotal.vBCST + "</vBCST>");
+                xmlString.Append("		<vST>" + total.IcmsTotal.vST + "</vST>");
+                xmlString.Append("		<vProd>" + total.IcmsTotal.vProd + "</vProd>");
+                xmlString.Append("		<vFrete>" + total.IcmsTotal.vFrete + "</vFrete>");
+                xmlString.Append("		<vSeg>" + total.IcmsTotal.vSeg + "</vSeg>");
+                xmlString.Append("		<vDesc>" + total.IcmsTotal.vDesc + "</vDesc>");
+                xmlString.Append("		<vII>0.00</vII>");
+                xmlString.Append("		<vIPI>" + total.IcmsTotal.vIPI + "</vIPI>");
+                xmlString.Append("		<vPIS>0.00</vPIS>");
+                xmlString.Append("		<vCOFINS>0.00</vCOFINS>");
+                xmlString.Append("		<vOutro>" + total.IcmsTotal.vOutro + "</vOutro>");
+                xmlString.Append("		<vNF>" + total.IcmsTotal.vNF + "</vNF>");
 
-            if (!string.IsNullOrEmpty(total.IcmsTotal.vTotTrib))
-                xmlString.Append("		<vTotTrib>" + total.IcmsTotal.vTotTrib + "</vTotTrib>");
+                if (!string.IsNullOrEmpty(total.IcmsTotal.vTotTrib))
+                    xmlString.Append("		<vTotTrib>" + total.IcmsTotal.vTotTrib + "</vTotTrib>");
 
-            xmlString.Append("	</ICMSTot>");
+                xmlString.Append("	</ICMSTot>");
+            }
+
+            if (total.IssqnTot != null)
+            {
+                xmlString.Append("	<ISSQNtot>");
+                xmlString.Append("		<vServ>" + total.IssqnTot.vServ + "</vServ>");
+                xmlString.Append("		<vBC>" + total.IssqnTot.vBC + "</vBC>");
+                xmlString.Append("		<dCompet>" + total.IssqnTot.dCompet + "</dCompet>");
+                xmlString.Append("		<cRegTrib>" + total.IssqnTot.cRegTrib + "</cRegTrib>");
+                xmlString.Append("	</ISSQNtot>");
+            }
             xmlString.Append("</total>");
         }
 
@@ -778,11 +756,11 @@ namespace NFeEletronica.NotaFiscal
             xmlString.Append("<transp>");
             xmlString.Append("	<modFrete>" + transp.modFrete + "</modFrete>");
 
-            if (!String.IsNullOrEmpty(transp.CNPJ))
+            if (!string.IsNullOrEmpty(transp.CNPJ))
             {
                 xmlString.Append("	<transporta>");
 
-                if (!String.IsNullOrEmpty(transp.CNPJ))
+                if (!string.IsNullOrEmpty(transp.CNPJ))
                     xmlString.Append("		<CNPJ>" + transp.CNPJ + "</CNPJ>");
 
                 /*
@@ -790,32 +768,24 @@ namespace NFeEletronica.NotaFiscal
                     this.XmlString.Append("		<CPF>" + this.transp.CPF + "</CPF>");
                 */
 
-                if (!String.IsNullOrEmpty(transp.xNome))
+                if (!string.IsNullOrEmpty(transp.xNome))
                     xmlString.Append("		<xNome>" + transp.xNome + "</xNome>");
 
-                if (!String.IsNullOrEmpty(transp.IE))
-                {
+                if (!string.IsNullOrEmpty(transp.IE))
                     xmlString.Append("		<IE>" + transp.IE + "</IE>");
-                }
 
-                if (!String.IsNullOrEmpty(transp.xEnder))
-                {
+                if (!string.IsNullOrEmpty(transp.xEnder))
                     xmlString.Append("		<xEnder>" + transp.xEnder + "</xEnder>");
-                }
 
-                if (!String.IsNullOrEmpty(transp.xMun))
-                {
+                if (!string.IsNullOrEmpty(transp.xMun))
                     xmlString.Append("		<xMun>" + transp.xMun + "</xMun>");
-                }
 
-                if (!String.IsNullOrEmpty(transp.UF))
-                {
+                if (!string.IsNullOrEmpty(transp.UF))
                     xmlString.Append("		<UF>" + transp.UF.Trim() + "</UF>");
-                }
 
                 xmlString.Append("	</transporta>");
             }
-            if (!String.IsNullOrEmpty(transp.veic_placa))
+            if (!string.IsNullOrEmpty(transp.veic_placa))
             {
                 xmlString.Append("	<veicTransp>");
                 xmlString.Append("		<placa>" + transp.veic_placa + "</placa>");
@@ -823,25 +793,23 @@ namespace NFeEletronica.NotaFiscal
                 xmlString.Append("	</veicTransp>");
             }
 
-            if (!String.IsNullOrEmpty(transp.Vol.qVol))
+            if ((transp.Vol != null) && !string.IsNullOrEmpty(transp.Vol.qVol))
             {
                 xmlString.Append("	<vol>");
                 xmlString.Append("		<qVol>" + transp.Vol.qVol + "</qVol>");
                 xmlString.Append("		<esp>" + transp.Vol.esp + "</esp>");
 
 
-                if (!String.IsNullOrEmpty(transp.Vol.marca))
-                {
+                if (!string.IsNullOrEmpty(transp.Vol.marca))
                     xmlString.Append("		<marca>" + transp.Vol.marca + "</marca>");
-                }
 
-                if (!String.IsNullOrEmpty(transp.Vol.nVol))
+                if (!string.IsNullOrEmpty(transp.Vol.nVol))
                     xmlString.Append("		<nVol>" + transp.Vol.nVol + "</nVol>");
 
-                if (!String.IsNullOrEmpty(transp.Vol.pesoL))
+                if (!string.IsNullOrEmpty(transp.Vol.pesoL))
                     xmlString.Append("		<pesoL>" + transp.Vol.pesoL + "</pesoL>");
 
-                if (!String.IsNullOrEmpty(transp.Vol.pesoB))
+                if (!string.IsNullOrEmpty(transp.Vol.pesoB))
                     xmlString.Append("		<pesoB>" + transp.Vol.pesoB + "</pesoB>");
 
                 xmlString.Append("	</vol>");
@@ -851,7 +819,7 @@ namespace NFeEletronica.NotaFiscal
 
         private void MontaCOBR()
         {
-            if (!String.IsNullOrEmpty(cobr.Fat.nFat))
+            if ((cobr.Fat != null) && !string.IsNullOrEmpty(cobr.Fat.nFat))
             {
                 xmlString.Append("<cobr>");
                 xmlString.Append("	<fat>");

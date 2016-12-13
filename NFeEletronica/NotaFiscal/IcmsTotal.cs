@@ -21,6 +21,15 @@ namespace NFeEletronica.NotaFiscal
         [XmlElement("vICMSDeson")]
         public string vICMSDeson { get; set; }
 
+        [XmlElement("vFCPUFDest")]
+        public string vFCPUFDest { get; set; }
+
+        [XmlElement("vICMSUFDest")]
+        public string vICMSUFDest { get; set; }
+
+        [XmlElement("vICMSUFRemet")]
+        public string vICMSUFRemet { get; set; }
+
         [XmlElement("vST")]
         public string vST { get; set; }
 

@@ -43,7 +43,7 @@ namespace NFeEletronica.NotaFiscal
         [XmlElement("xPais")]
         public string xPais { get; set; }
 
-        [XmlElement("cUF")]
+        [XmlElement("fone")]
         public string fone { get; set; }
     }
 }

@@ -23,5 +23,8 @@ namespace NFeEletronica.NotaFiscal
 
         [XmlElement("COFINS")]
         public Cofins Cofins { get; set; }
+
+        [XmlElement("ISSQN")]
+        public Issqn Issqn { get; set; }
     }
 }

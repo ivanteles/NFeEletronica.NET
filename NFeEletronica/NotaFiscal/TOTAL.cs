@@ -9,5 +9,8 @@ namespace NFeEletronica.NotaFiscal
 
         [XmlElement("ICMSTot")]
         public IcmsTotal IcmsTotal { get; set; }
+
+        [XmlElement("ISSQNtot")]
+        public IssqnTot IssqnTot { get; set; }
     }
 }

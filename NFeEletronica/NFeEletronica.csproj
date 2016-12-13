@@ -60,6 +60,8 @@
     <Compile Include="NotaFiscal\IcmsTotal.cs" />
     <Compile Include="NotaFiscal\Imposto.cs" />
     <Compile Include="NotaFiscal\Ipi.cs" />
+    <Compile Include="NotaFiscal\Issqn.cs" />
+    <Compile Include="NotaFiscal\IssqnTot.cs" />
     <Compile Include="NotaFiscal\NotaFiscal.cs" />
     <Compile Include="NotaFiscal\Cobr.cs" />
     <Compile Include="NotaFiscal\Dest.cs" />
