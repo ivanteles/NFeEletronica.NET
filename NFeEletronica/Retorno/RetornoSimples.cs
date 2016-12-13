@@ -1,16 +1,14 @@
-﻿using System;
-
-namespace NFeEletronica.Retorno
+﻿namespace NFeEletronica.Retorno
 {
     public class RetornoSimples : IRetorno
     {
-        public RetornoSimples(String status, String motivo)
+        public RetornoSimples(string status, string motivo)
         {
             Status = status;
             Motivo = motivo;
         }
 
-        public String Status { get; }
-        public String Motivo { get; }
+        public string Status { get; }
+        public string Motivo { get; }
     }
 }

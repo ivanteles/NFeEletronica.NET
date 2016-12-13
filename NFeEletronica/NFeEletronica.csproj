@@ -95,8 +95,8 @@
     <Compile Include="Utils\Util.cs" />
     <Compile Include="Versao\BaseVersao.cs" />
     <Compile Include="Versao\NFeVersao.cs" />
-    <Compile Include="Versao\Versao2_0_0.cs" />
-    <Compile Include="Versao\Versao3_1_0.cs" />
+    <Compile Include="Versao\Versao200.cs" />
+    <Compile Include="Versao\Versao310.cs" />
     <Compile Include="Web References\NFeInutilizacao\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

@@ -13,13 +13,13 @@ namespace NFeEletronica.Contexto
         
         public NFeContexto(bool producao, NFeVersao versao, IGerenciadorDeCertificado gerenciadorDeCertificado = null)
         {
-            if (versao == NFeVersao.VERSAO_3_1_0)
+            if (versao == NFeVersao.Versao310)
             {
-                this.Versao = new Versao3_1_0();
+                this.Versao = new Versao310();
             }
             else
             {
-                this.Versao = new Versao2_0_0();
+                this.Versao = new Versao200();
             }
 
             //Abre uma janela para selecionar o certificado instalado no computador

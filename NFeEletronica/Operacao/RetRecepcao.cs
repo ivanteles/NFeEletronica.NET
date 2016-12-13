@@ -1,10 +1,14 @@
-﻿using System;
+﻿#region
+
+using System;
 using System.Text;
 using System.Threading;
 using System.Xml;
 using NFeEletronica.Assinatura;
 using NFeEletronica.Contexto;
 using NFeEletronica.NfeRetRecepcao2;
+
+#endregion
 
 namespace NFeEletronica.Operacao
 {
@@ -18,7 +22,7 @@ namespace NFeEletronica.Operacao
         {
         }
 
-        public Retorno.RetRecepcao Enviar(String numeroRecibo, String cUF)
+        public Retorno.RetRecepcao Enviar(string numeroRecibo, string cUf)
         {
             //Monta corpo do xml de envio
             var xmlString = new StringBuilder();
@@ -33,11 +37,13 @@ namespace NFeEletronica.Operacao
 
 
             var nfeRetRecepcao2 = new NfeRetRecepcao2.NfeRetRecepcao2();
-            var nfeCabecalho = new nfeCabecMsg();
+            var nfeCabecalho = new nfeCabecMsg
+            {
+                cUF = cUf,
+                versaoDados = NFeContexto.Versao.VersaoString
+            };
 
             //Informa dados no WS de cabecalho
-            nfeCabecalho.cUF = cUF;
-            nfeCabecalho.versaoDados = NFeContexto.Versao.VersaoString;
 
             nfeRetRecepcao2.nfeCabecMsgValue = nfeCabecalho;
             nfeRetRecepcao2.ClientCertificates.Add(NFeContexto.Certificado);
@@ -59,23 +65,17 @@ namespace NFeEletronica.Operacao
                 retorno = new Retorno.RetRecepcao("", "", status, motivo);
 
                 if (retorno.Status != "105")
-                {
                     isEmProcessamento = false;
-                }
                 else
-                {
                     Thread.Sleep(5000);
-                }
             } while (isEmProcessamento);
 
 
             if (retorno.Status != "225")
             {
                 //Isso aqui é o resultado de CADA NFe, mas como por enquanto pra cada lote só manda 1 nota, entao segue assim por enquanto #todo
-                if (retorno.Status != "100" && retorno.Status != "104")
-                {
+                if ((retorno.Status != "100") && (retorno.Status != "104"))
                     throw new Exception("Lote não processado: " + retorno.Status + " - " + retorno.Motivo);
-                }
                 var protocolo = "";
                 var status = "";
                 var motivo = "";
@@ -92,10 +92,8 @@ namespace NFeEletronica.Operacao
                 }
 
                 //Caso deu algum problema e nao veio o protocolo, mas veio a descrição do problema
-                if (String.IsNullOrEmpty(protocolo) && (!String.IsNullOrEmpty(status) && !String.IsNullOrEmpty(motivo)))
-                {
+                if (string.IsNullOrEmpty(protocolo) && !string.IsNullOrEmpty(status) && !string.IsNullOrEmpty(motivo))
                     throw new Exception("Erro de retorno: " + status + " - " + motivo);
-                }
 
                 try
                 {

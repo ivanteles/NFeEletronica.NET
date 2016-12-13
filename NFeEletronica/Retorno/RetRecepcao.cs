@@ -1,20 +1,18 @@
-﻿using System;
-
-namespace NFeEletronica.Retorno
+﻿namespace NFeEletronica.Retorno
 {
     public class RetRecepcao : IRetorno
     {
-        public RetRecepcao(String numeroNota, String protocolo, String status = "", String motivo = "")
+        public RetRecepcao(string numeroNota, string protocolo, string status = "", string motivo = "")
         {
             NumeroNota = numeroNota;
             Protocolo = protocolo;
             Status = status;
-            Motivo = Motivo;
+            Motivo = motivo;
         }
 
-        public String NumeroNota { get; private set; }
-        public String Protocolo { get; private set; }
-        public String Status { get; }
-        public String Motivo { get; }
+        public string NumeroNota { get; private set; }
+        public string Protocolo { get; private set; }
+        public string Status { get; }
+        public string Motivo { get; }
     }
 }

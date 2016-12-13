@@ -7,7 +7,7 @@ namespace NFeEletronica.Assinatura
 {
     public class Xml
     {
-        private String validarResultado = "";
+        private String _validarResultado = "";
 
         /// <summary>
         ///     Valida se um Xml está seguindo de acordo um Schema
@@ -28,16 +28,20 @@ namespace NFeEletronica.Assinatura
             if (!File.Exists(arquivoSchema))
                 throw new Exception("Arquivo de schema: \"" + arquivoSchema + "\" não encontrado.");
 
+            XmlReaderSettings settings = new XmlReaderSettings();
+            settings.ValidationEventHandler += Reader_ValidationEventHandler;
+            settings.Schemas.Add("http://www.portalfiscal.inf.br/nfe", arquivoSchema);
             // Cria um novo XMLValidatingReader
-            var reader = new XmlValidatingReader(new XmlTextReader(new StreamReader(arquivoXml)));
+            //var reader = new XmlValidatingReader(new XmlTextReader(new StreamReader(arquivoXml)));
+            var reader = XmlReader.Create(XmlReader.Create(new StreamReader(arquivoXml)), settings);
             // Cria um schemacollection
-            var schemaCollection = new XmlSchemaCollection();
+            //var schemaCollection = new XmlSchemaCollection();
             //Adiciona o XSD e o namespace
-            schemaCollection.Add("http://www.portalfiscal.inf.br/nfe", arquivoSchema);
+            //schemaCollection.Add("http://www.portalfiscal.inf.br/nfe", arquivoSchema);
             // Adiciona o schema ao ValidatingReader
-            reader.Schemas.Add(schemaCollection);
+            //reader.Schemas.Add(schemaCollection);
             //Evento que retorna a mensagem de validacao
-            reader.ValidationEventHandler += Reader_ValidationEventHandler;
+            //reader.ValidationEventHandler += Reader_ValidationEventHandler;
             //Percorre o XML
             while (reader.Read())
             {
@@ -45,9 +49,9 @@ namespace NFeEletronica.Assinatura
             reader.Close(); //Fecha o arquivo.
             //O Resultado é preenchido no reader_ValidationEventHandler
 
-            if (validarResultado != "")
+            if (_validarResultado != "")
             {
-                throw new Exception(validarResultado);
+                throw new Exception(_validarResultado);
             }
         }
 
@@ -59,7 +63,7 @@ namespace NFeEletronica.Assinatura
         private void Reader_ValidationEventHandler(object sender, ValidationEventArgs e)
         {
             // Como sera exibida a mensagem de ERROS de validacao
-            validarResultado = validarResultado + String.Format("\rLinha:{1}" + Environment.NewLine +
+            _validarResultado = _validarResultado + String.Format("\rLinha:{1}" + Environment.NewLine +
                                                                 "\rColuna:{0}" + Environment.NewLine +
                                                                 "\rErro:{2}" + Environment.NewLine,
                 e.Exception.LinePosition,

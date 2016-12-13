@@ -1,4 +1,6 @@
-﻿using System;
+﻿#region
+
+using System;
 using System.Collections.Generic;
 using System.Xml;
 using NFeEletronica.Assinatura;
@@ -8,11 +10,13 @@ using NFeEletronica.NotaFiscal;
 using NFeEletronica.Utils;
 using NFeEletronica.Versao;
 
+#endregion
+
 namespace NFeEletronica.Operacao
 {
     public class Recepcao : BaseOperacao
     {
-        private readonly String arquivoSchema = "";
+        private readonly string arquivoSchema = "";
         private readonly List<Nota> notaLista = new List<Nota>();
         private readonly bool sincrono;
 
@@ -34,9 +38,7 @@ namespace NFeEletronica.Operacao
 
             //Verifica se já passou o limite de notas por lote (regra do SEFAZ). 
             if (notaLista.Count >= 50)
-            {
                 throw new Exception("Limite máximo por lote é de 50 arquivos");
-            }
 
             //Assina a nota
             try
@@ -67,7 +69,7 @@ namespace NFeEletronica.Operacao
         ///     Adiciona e valida uma nota a ser enviada apartir de um arquivo XML.
         /// </summary>
         /// <param name="arquivoCaminhoXml"></param>
-        public void AdicionarNota(String arquivoCaminhoXml)
+        public void AdicionarNota(string arquivoCaminhoXml)
         {
             //Carrega uma nota XML e passa para um objeto Nota
             var nota = new Nota(arquivoCaminhoXml);
@@ -85,17 +87,11 @@ namespace NFeEletronica.Operacao
 
             xmlString += "<idLote>" + numeroLote.ToString("000000000000000") + "</idLote>";
 
-            if (NFeContexto.Versao == NFeVersao.VERSAO_3_1_0)
-            {
+            if (NFeContexto.Versao == NFeVersao.Versao310)
                 if (sincrono)
-                {
                     xmlString += "<indSinc>1</indSinc>";
-                }
                 else
-                {
                     xmlString += "<indSinc>0</indSinc>";
-                }
-            }
 
             //Adiciona as notas no lote
             for (var i = 0; i < notaLista.Count; i++)
@@ -119,7 +115,7 @@ namespace NFeEletronica.Operacao
             return Xml.StringToXml(xmlString);
         }
 
-        public Retorno.Recepcao Enviar(long numeroLote, String cUF)
+        public Retorno.Recepcao Enviar(long numeroLote, string cUF)
         {
             var nfeRecepcao2 = new NfeRecepcao2.NfeRecepcao2();
             var nfeCabecalho = new nfeCabecMsg();
