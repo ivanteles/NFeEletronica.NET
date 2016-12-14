@@ -7,7 +7,7 @@
             NumeroNota = numeroNota;
             Protocolo = protocolo;
             Status = status;
-            Motivo = motivo;
+            Motivo = Motivo;
         }
 
         public string NumeroNota { get; private set; }

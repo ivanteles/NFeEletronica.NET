@@ -1,25 +1,27 @@
-﻿using System;
+﻿#region
+
 using System.Configuration;
 using System.IO;
-using System.Reflection;
+using System.Web.Hosting;
+
+#endregion
 
 namespace NFeEletronica.Utils
 {
     public class Util
     {
-        public static String ContentFolderSchemaValidacao
+        public static string ContentFolderSchemaValidacao
         {
             get
             {
                 if (ConfigurationManager.AppSettings["NFeEletronica.Pasta.SchemaValidacao"] != null)
-                {
                     return ConfigurationManager.AppSettings["NFeEletronica.Pasta.SchemaValidacao"];
-                }
-                return Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + "\\NFeSchemas";
+                var caminho = Path.Combine(HostingEnvironment.ApplicationPhysicalPath, "NFeSchemas");
+                return caminho;
             }
         }
 
-        public static String GerarModulo11(String chaveAcesso)
+        public static string GerarModulo11(string chaveAcesso)
         {
             var total = 0;
             var multiplier = 2;
@@ -27,20 +29,16 @@ namespace NFeEletronica.Utils
             for (var i = chaveAcesso.Length - 1; i >= 0; i--)
             {
                 if (9 < multiplier)
-                {
                     multiplier = 2;
-                }
 
-                var digit = Int32.Parse(chaveAcesso.Substring(i, 1));
+                var digit = int.Parse(chaveAcesso.Substring(i, 1));
                 total += digit*multiplier++;
             }
 
-            var remainder = (total%11);
+            var remainder = total%11;
 
-            if (0 == remainder || 1 == remainder)
-            {
+            if ((0 == remainder) || (1 == remainder))
                 return "0";
-            }
 
             return (11 - remainder).ToString();
         }

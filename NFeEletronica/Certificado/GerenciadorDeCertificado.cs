@@ -1,6 +1,10 @@
-﻿using System;
+﻿#region
+
+using System;
 using System.IO;
 using System.Security.Cryptography.X509Certificates;
+
+#endregion
 
 namespace NFeEletronica.Certificado
 {
@@ -15,7 +19,7 @@ namespace NFeEletronica.Certificado
             var scollection = X509Certificate2UI.SelectFromCollection(ListaCertificados(),
                 "Certificado(s) Digital(is) disponível(is)", "Selecione o certificado digital para uso no aplicativo",
                 X509SelectionFlag.SingleSelection);
-            if (scollection != null && scollection.Count == 0) return null;
+            if ((scollection != null) && (scollection.Count == 0)) return null;
             return scollection[0];
         }
 
@@ -27,12 +31,8 @@ namespace NFeEletronica.Certificado
         {
             var colecao = ListaCertificados();
             foreach (var certificado in colecao)
-            {
                 if (certificado.IssuerName.Name.ToLower().Contains("Secretaria da Receita Federal do Brasil".ToLower()))
-                {
                     return certificado;
-                }
-            }
 
             return null;
         }
@@ -42,7 +42,7 @@ namespace NFeEletronica.Certificado
         /// </summary>
         /// <param name="arquivoCaminho"></param>
         /// <returns>Certificado para assinatura</returns>
-        public X509Certificate2 SelecionarPorArquivo(String arquivoCaminho)
+        public X509Certificate2 SelecionarPorArquivo(string arquivoCaminho)
         {
             return new X509Certificate2(arquivoCaminho, "NFeEletronica");
         }
@@ -77,7 +77,7 @@ namespace NFeEletronica.Certificado
         /// </summary>
         /// <param name="certificado"></param>
         /// <param name="arquivoCaminho"></param>
-        public void SalvarCertificado(X509Certificate2 certificado, String arquivoCaminho)
+        public void SalvarCertificado(X509Certificate2 certificado, string arquivoCaminho)
         {
             var certData = certificado.Export(X509ContentType.Cert, "NFeEletronica");
             File.WriteAllBytes(arquivoCaminho, certData);

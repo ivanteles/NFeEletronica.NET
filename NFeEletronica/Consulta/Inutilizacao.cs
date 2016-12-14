@@ -1,23 +1,21 @@
-﻿using System;
-
-namespace NFeEletronica.Consulta
+﻿namespace NFeEletronica.Consulta
 {
     public class Inutilizacao
     {
-        public Inutilizacao(String justificativa, String cnpj, String uf)
+        public Inutilizacao(string justificativa, string cnpj, string uf)
         {
             Justificativa = justificativa;
-            CNPJ = cnpj;
-            UF = uf;
+            Cnpj = cnpj;
+            Uf = uf;
         }
 
-        public String Justificativa { get; private set; }
-        public String CNPJ { get; private set; }
-        public String UF { get; private set; }
-        public String Ano { get; set; }
-        public String Mod { get; set; }
-        public String Serie { get; set; }
-        public String NumeroNfeInicial { get; set; }
-        public String NumeroNfeFinal { get; set; }
+        public string Justificativa { get; private set; }
+        public string Cnpj { get; private set; }
+        public string Uf { get; private set; }
+        public string Ano { get; set; }
+        public string Mod { get; set; }
+        public string Serie { get; set; }
+        public string NumeroNfeInicial { get; set; }
+        public string NumeroNfeFinal { get; set; }
     }
 }

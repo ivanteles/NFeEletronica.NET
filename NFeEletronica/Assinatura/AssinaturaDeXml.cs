@@ -34,7 +34,7 @@ namespace NFeEletronica.Assinatura
             }
 
             // Create a new XML document.
-            var doc = new XmlDocument {PreserveWhitespace = false};
+            var doc = new XmlDocument { PreserveWhitespace = false };
 
             // Format the document to ignore white spaces.
             doc.LoadXml(xmlString);
@@ -46,9 +46,7 @@ namespace NFeEletronica.Assinatura
                 reference.Uri = uri;
 
             // Create a SignedXml object.
-            var signedXml = new SignedXml(doc) {SigningKey = x509Cert.PrivateKey};
-
-            // Add the key to the SignedXml document
+            var signedXml = new SignedXml(doc) { SigningKey = x509Cert.PrivateKey };
 
             // Add an enveloped transformation to the reference.
             var env = new XmlDsigEnvelopedSignatureTransform();

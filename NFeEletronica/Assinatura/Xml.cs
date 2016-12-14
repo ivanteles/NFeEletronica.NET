@@ -1,13 +1,17 @@
-﻿using System;
+﻿#region
+
+using System;
 using System.IO;
 using System.Xml;
 using System.Xml.Schema;
+
+#endregion
 
 namespace NFeEletronica.Assinatura
 {
     public class Xml
     {
-        private String _validarResultado = "";
+        private string _validarResultado = "";
 
         /// <summary>
         ///     Valida se um Xml está seguindo de acordo um Schema
@@ -15,7 +19,7 @@ namespace NFeEletronica.Assinatura
         /// <param name="arquivoXml">Arquivo Xml</param>
         /// <param name="arquivoSchema">Arquivo de Schema</param>
         /// <returns>True se estiver certo, Erro se estiver errado</returns>
-        public void ValidaSchema(String arquivoXml, String arquivoSchema)
+        public void ValidaSchema(string arquivoXml, string arquivoSchema)
         {
             //Seleciona o arquivo de schema de acordo com o schema informado
             //arquivoSchema = Bll.Util.ContentFolderSchemaValidacao + "\\" + arquivoSchema;
@@ -28,20 +32,16 @@ namespace NFeEletronica.Assinatura
             if (!File.Exists(arquivoSchema))
                 throw new Exception("Arquivo de schema: \"" + arquivoSchema + "\" não encontrado.");
 
-            XmlReaderSettings settings = new XmlReaderSettings();
-            settings.ValidationEventHandler += Reader_ValidationEventHandler;
-            settings.Schemas.Add("http://www.portalfiscal.inf.br/nfe", arquivoSchema);
             // Cria um novo XMLValidatingReader
-            //var reader = new XmlValidatingReader(new XmlTextReader(new StreamReader(arquivoXml)));
-            var reader = XmlReader.Create(XmlReader.Create(new StreamReader(arquivoXml)), settings);
+            var reader = new XmlValidatingReader(new XmlTextReader(new StreamReader(arquivoXml)));
             // Cria um schemacollection
-            //var schemaCollection = new XmlSchemaCollection();
+            var schemaCollection = new XmlSchemaCollection();
             //Adiciona o XSD e o namespace
-            //schemaCollection.Add("http://www.portalfiscal.inf.br/nfe", arquivoSchema);
+            schemaCollection.Add("http://www.portalfiscal.inf.br/nfe", arquivoSchema);
             // Adiciona o schema ao ValidatingReader
-            //reader.Schemas.Add(schemaCollection);
+            reader.Schemas.Add(schemaCollection);
             //Evento que retorna a mensagem de validacao
-            //reader.ValidationEventHandler += Reader_ValidationEventHandler;
+            reader.ValidationEventHandler += Reader_ValidationEventHandler;
             //Percorre o XML
             while (reader.Read())
             {
@@ -50,9 +50,7 @@ namespace NFeEletronica.Assinatura
             //O Resultado é preenchido no reader_ValidationEventHandler
 
             if (_validarResultado != "")
-            {
                 throw new Exception(_validarResultado);
-            }
         }
 
         /// <summary>
@@ -63,15 +61,15 @@ namespace NFeEletronica.Assinatura
         private void Reader_ValidationEventHandler(object sender, ValidationEventArgs e)
         {
             // Como sera exibida a mensagem de ERROS de validacao
-            _validarResultado = _validarResultado + String.Format("\rLinha:{1}" + Environment.NewLine +
+            _validarResultado = _validarResultado + string.Format("\rLinha:{1}" + Environment.NewLine +
                                                                 "\rColuna:{0}" + Environment.NewLine +
                                                                 "\rErro:{2}" + Environment.NewLine,
-                e.Exception.LinePosition,
-                e.Exception.LineNumber,
-                e.Exception.Message);
+                                   e.Exception.LinePosition,
+                                   e.Exception.LineNumber,
+                                   e.Exception.Message);
         }
 
-        public static XmlDocument StringToXml(String stringText)
+        public static XmlDocument StringToXml(string stringText)
         {
             var xml = new XmlDocument();
             xml.LoadXml(stringText);

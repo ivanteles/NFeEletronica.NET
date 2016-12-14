@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<discovery xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.xmlsoap.org/disco/">
+  <contractRef ref="https://nfce-homologacao.svrs.rs.gov.br/ws/NfeRetAutorizacao/NFeRetAutorizacao.asmx?wsdl" docRef="https://nfce-homologacao.svrs.rs.gov.br/ws/NfeRetAutorizacao/NFeRetAutorizacao.asmx" xmlns="http://schemas.xmlsoap.org/disco/scl/" />
+  <soap address="https://nfce-homologacao.svrs.rs.gov.br/ws/NfeRetAutorizacao/NFeRetAutorizacao.asmx" xmlns:q1="http://www.portalfiscal.inf.br/nfe/wsdl/NfeRetAutorizacao" binding="q1:NfeRetAutorizacaoSoap" xmlns="http://schemas.xmlsoap.org/disco/soap/" />
+  <soap address="https://nfce-homologacao.svrs.rs.gov.br/ws/NfeRetAutorizacao/NFeRetAutorizacao.asmx" xmlns:q2="http://www.portalfiscal.inf.br/nfe/wsdl/NfeRetAutorizacao" binding="q2:NfeRetAutorizacaoSoap12" xmlns="http://schemas.xmlsoap.org/disco/soap/" />
+</discovery>

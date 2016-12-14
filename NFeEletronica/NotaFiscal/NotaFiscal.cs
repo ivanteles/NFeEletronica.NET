@@ -98,9 +98,6 @@ namespace NFeEletronica.NotaFiscal
             //GerarCodigoDaNota();
 
 
-            _xmlString.Append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-            _xmlString.Append("<nfeProc xmlns=\"http://www.portalfiscal.inf.br/nfe\" versao=\"" +
-                             _nFeContexto.Versao.VersaoString + "\">");
             _xmlString.Append("<NFe xmlns=\"http://www.portalfiscal.inf.br/nfe\">");
             _xmlString.Append("   <infNFe Id=\"NFe" + NotaId + "\" versao=\"" + _nFeContexto.Versao.VersaoString + "\">");
 
@@ -125,7 +122,6 @@ namespace NFeEletronica.NotaFiscal
             _xmlString.Append("   </infNFe>");
             //this.XmlString.Append("   <Signature></Signature>"); acho que não precisa disso
             _xmlString.Append("</NFe>");
-            _xmlString.Append("</nfeProc>");
 
             var xmlDocument = new XmlDocument();
 
@@ -829,12 +825,12 @@ namespace NFeEletronica.NotaFiscal
                 _xmlString.Append("		<vLiq>" + Cobr.Fat.vLiq + "</vLiq>");
                 _xmlString.Append("	</fat>");
 
-                foreach (DUP t in Cobr.dup)
+                for (var i = 0; i < Cobr.dup.Count; i++)
                 {
                     _xmlString.Append("	<dup>");
-                    _xmlString.Append("		<nDup>" + t.nDup + "</nDup>");
-                    _xmlString.Append("		<dVenc>" + t.dVenc + "</dVenc>");
-                    _xmlString.Append("		<vDup>" + t.vDup + "</vDup>");
+                    _xmlString.Append("		<nDup>" + Cobr.dup[i].nDup + "</nDup>");
+                    _xmlString.Append("		<dVenc>" + Cobr.dup[i].dVenc + "</dVenc>");
+                    _xmlString.Append("		<vDup>" + Cobr.dup[i].vDup + "</vDup>");
                     _xmlString.Append("	</dup>");
                 }
 

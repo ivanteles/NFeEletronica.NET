@@ -1,4 +1,6 @@
-﻿using System;
+﻿#region
+
+using System;
 using System.IO;
 using System.Reflection;
 using System.Text;
@@ -6,34 +8,35 @@ using System.Xml;
 using NFeEletronica.Assinatura;
 using NFeEletronica.Consulta;
 using NFeEletronica.Contexto;
+using NFeEletronica.nfeRecepcaoEvento;
 using NFeEletronica.NotaFiscal;
-using NFeEletronica.RecepcaoEvento2;
 using NFeEletronica.Retorno;
 using NFeEletronica.Utils;
+
+#endregion
 
 namespace NFeEletronica.Operacao
 {
     public class RecepcaoEvento : BaseOperacao
     {
+        private readonly bool _producao;
+        private readonly string _uf;
+
         public RecepcaoEvento(INFeContexto nfe)
             : base(nfe)
         {
+            _producao = nfe.Producao;
+            _uf = nfe.Uf;
         }
 
-        private RetornoSimples EnviarEvento(StringBuilder eventoXml, String id, String arquivoEvento, String schema)
+        private RetornoSimples EnviarEvento(StringBuilder eventoXml, string id, string arquivoEvento, string schema)
         {
-            var documentXml = Assinar(eventoXml, id, schema);
-
+            var documentXml = Assinar(eventoXml, id);
             var xmlDoc = new XmlDocument();
             xmlDoc.Load(arquivoEvento);
-
             var conteudoXml = xmlDoc.OuterXml;
-
-
             var nota = new Nota(NFeContexto) {CaminhoFisico = arquivoEvento};
-
             var bllXml = new Xml();
-
             var xmlString = new StringBuilder();
             xmlString.Append("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
             xmlString.Append("<envEvento versao=\"1.00\" xmlns=\"http://www.portalfiscal.inf.br/nfe\">");
@@ -41,9 +44,9 @@ namespace NFeEletronica.Operacao
             xmlString.Append(conteudoXml);
             xmlString.Append("</envEvento>");
 
-            var SW_2 = File.CreateText(arquivoEvento);
-            SW_2.Write(xmlString.ToString());
-            SW_2.Close();
+            var sw2 = File.CreateText(arquivoEvento);
+            sw2.Write(xmlString.ToString());
+            sw2.Close();
 
             //Verifica se a nota está de acordo com o schema, se não estiver vai disparar um erro
             try
@@ -56,19 +59,42 @@ namespace NFeEletronica.Operacao
                 throw new Exception("Erro ao validar Nota: " + e.Message);
             }
 
-            var recepcao = new RecepcaoEvento2.RecepcaoEvento();
-            var cabecalho = new nfeCabecMsg();
-            cabecalho.cUF = "35";
-            cabecalho.versaoDados = "1.00";
+            if (_producao)
+            {
+                var recepcao = new nfeRecepcaoEvento.RecepcaoEvento();
+                var cabecalho = new nfeCabecMsg
+                {
+                    cUF = _uf,
+                    versaoDados = "1.00"
+                };
 
-            recepcao.nfeCabecMsgValue = cabecalho;
-            recepcao.ClientCertificates.Add(NFeContexto.Certificado);
+                recepcao.nfeCabecMsgValue = cabecalho;
+                recepcao.ClientCertificates.Add(NFeContexto.Certificado);
 
-            var resposta = recepcao.nfeRecepcaoEvento(Xml.StringToXml(xmlString.ToString()));
+                var resposta = recepcao.nfeRecepcaoEvento(Xml.StringToXml(xmlString.ToString()));
 
-            var status = resposta["retEvento"]["infEvento"]["xMotivo"].InnerText;
-            var motivo = resposta["retEvento"]["infEvento"]["cStat"].InnerText;
-            return new RetornoSimples(status, motivo);
+                var status = resposta["retEvento"]["infEvento"]["xMotivo"].InnerText;
+                var motivo = resposta["retEvento"]["infEvento"]["cStat"].InnerText;
+                return new RetornoSimples(status, motivo);
+            }
+            else
+            {
+                var recepcao = new NfeRecepcaoEvento1.RecepcaoEvento();
+                var cabecalho = new NfeRecepcaoEvento1.nfeCabecMsg
+                {
+                    cUF = _uf,
+                    versaoDados = "1.00"
+                };
+
+                recepcao.nfeCabecMsgValue = cabecalho;
+                recepcao.ClientCertificates.Add(NFeContexto.Certificado);
+
+                var resposta = recepcao.nfeRecepcaoEvento(Xml.StringToXml(xmlString.ToString()));
+
+                var status = resposta["retEvento"]["infEvento"]["xMotivo"].InnerText;
+                var motivo = resposta["retEvento"]["infEvento"]["cStat"].InnerText;
+                return new RetornoSimples(status, motivo);
+            }
         }
 
         public IRetorno CartaCorrecao(CartaCorrecao cartaCorrecao)
@@ -79,9 +105,9 @@ namespace NFeEletronica.Operacao
             var xmlString = new StringBuilder();
             xmlString.Append("<evento xmlns=\"http://www.portalfiscal.inf.br/nfe\" versao=\"" + "1.00" + "\">");
             xmlString.Append("  <infEvento Id=\"" + id + "\">");
-            xmlString.Append("      <cOrgao>" + cartaCorrecao.CodigoUF + "</cOrgao>");
+            xmlString.Append("      <cOrgao>" + cartaCorrecao.CodigoUf + "</cOrgao>");
             xmlString.Append("      <tpAmb>" + (NFeContexto.Producao ? "1" : "2") + "</tpAmb>");
-            xmlString.Append("      <CNPJ>" + cartaCorrecao.CNPJ + "</CNPJ>");
+            xmlString.Append("      <CNPJ>" + cartaCorrecao.Cnpj + "</CNPJ>");
             xmlString.Append("      <chNFe>" + cartaCorrecao.NotaChaveAcesso + "</chNFe>");
             xmlString.Append("      <dhEvento>" + DateTime.Now.ToString("s") + "-03:00" + "</dhEvento>");
             xmlString.Append("      <tpEvento>" + tpEvento + "</tpEvento>");
@@ -100,7 +126,7 @@ namespace NFeEletronica.Operacao
             return EnviarEvento(xmlString, id, arquivoTemporario, "envCCe_v1.00.xsd");
         }
 
-        public IRetorno Cancelar(Cancelamento eventoCancelamento, String caminhoXml)
+        public IRetorno Cancelar(Cancelamento eventoCancelamento, string caminhoXml)
         {
             var tpEvento = "110111";
             var id = "ID" + tpEvento + eventoCancelamento.NotaChaveAcesso + "01";
@@ -110,7 +136,7 @@ namespace NFeEletronica.Operacao
             xmlString.Append("		<infEvento Id=\"" + id + "\">");
             xmlString.Append("			<cOrgao>35</cOrgao>");
             xmlString.Append("			<tpAmb>" + (NFeContexto.Producao ? "1" : "2") + "</tpAmb>");
-            xmlString.Append("			<CNPJ>" + eventoCancelamento.CNPJ + "</CNPJ>");
+            xmlString.Append("			<CNPJ>" + eventoCancelamento.Cnpj + "</CNPJ>");
             xmlString.Append("			<chNFe>" + eventoCancelamento.NotaChaveAcesso + "</chNFe>");
             xmlString.Append("			<dhEvento>" + DateTime.Now.ToString("s") + "-03:00" + "</dhEvento>");
             xmlString.Append("			<tpEvento>" + tpEvento + "</tpEvento>");
@@ -128,16 +154,13 @@ namespace NFeEletronica.Operacao
             return EnviarEvento(xmlString, id, arquivoTemporario, "envEventoCancNFe_v1.00.xsd");
         }
 
-        private String Assinar(StringBuilder xmlStringBuilder, String id, String schema)
+        private string Assinar(StringBuilder xmlStringBuilder, string id)
         {
-            var bllXml = new Xml();
             var arquivoTemporario = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\temp.xml";
             var sw2 = File.CreateText(arquivoTemporario);
             sw2.Write(xmlStringBuilder.ToString());
             sw2.Close();
-
             var nota = new Nota(NFeContexto) {CaminhoFisico = arquivoTemporario};
-
             //Assina a nota
             var bllAssinatura = new AssinaturaDeXml();
             try

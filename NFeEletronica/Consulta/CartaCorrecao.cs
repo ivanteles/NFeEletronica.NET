@@ -1,23 +1,27 @@
-﻿using System;
+﻿#region
+
+using System;
+
+#endregion
 
 namespace NFeEletronica.Consulta
 {
     public class CartaCorrecao
     {
-        public CartaCorrecao(String numeroLote, String notaChaveAcesso, String correcao, String cnpj, String codigoUF)
+        public CartaCorrecao(string numeroLote, string notaChaveAcesso, string correcao, string cnpj, string codigoUf)
         {
             NumeroLote = numeroLote;
             NotaChaveAcesso = notaChaveAcesso;
             Correcao = correcao;
-            CNPJ = cnpj;
-            CodigoUF = codigoUF;
+            Cnpj = cnpj;
+            CodigoUf = codigoUf;
         }
 
-        public String NumeroLote { get; private set; }
-        public String NotaChaveAcesso { get; private set; }
-        public String Correcao { get; private set; }
-        public String CNPJ { get; private set; }
-        public String CodigoUF { get; private set; }
+        public string NumeroLote { get; private set; }
+        public string NotaChaveAcesso { get; private set; }
+        public string Correcao { get; private set; }
+        public string Cnpj { get; private set; }
+        public string CodigoUf { get; private set; }
         public DateTime DataEvento { get; set; }
     }
 }
